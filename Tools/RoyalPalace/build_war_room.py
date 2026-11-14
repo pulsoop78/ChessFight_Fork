@@ -53,7 +53,7 @@ class LegacyBuilder:
     def box(self,p,name,pos,size,color='Slate',solid=True,rot=(0,0,0,1),shape='Cube'):
         return self.c.cube(p,name,pos,size,color,solid,rot,shape)
     def wall(self,p,name,pos,size,occluder=False):
-        self.box(p,name,pos,size,'Slate')
+        self.box(p,name,pos,size,'RoyalIvory')
         if occluder:self.report['occluder_boxes'].append({'name':name,'center':pos,'size':size})
     def map(self,p,pos,side=False,flipped=False):
         g=self.group('Framed campaign map',p,pos,kit.yaw((90 if side else 0)+(180 if flipped else 0)))
@@ -328,7 +328,7 @@ class LegacyBuilder:
         for side in (-1,1):
             x=86*side
             self.box(g,'Commander chair seat',(x,1,64),(22,4,26),'Wood',False)
-            self.box(g,'Commander chair back',(x+side*11,18,64),(4,34,28),'Purple',False)
+            self.box(g,'Commander chair back',(x+side*11,18,64),(4,34,28),'RoyalIvory',False)
             self.box(g,'Chair crown',(x+side*8.8,28,64),(.5,7,7),'Gold',False)
             for z in (51,77):self.box(g,'Chair arm rest',(x,8,z),(22,2,3),'Wood',False)
             for z in (-10,138):
@@ -426,21 +426,21 @@ class Builder(LegacyBuilder):
         self.box(self.root,name,(0,top-.6,(a+b)/2),(width,1.2,b-a),'Wood',solid)
         self.box(self.root,name+' brass edge',(0,top-1.25,(a+b)/2),(width+.15,.15,b-a+.15),'Gold',False)
         for side in (-1,1):
-            self.box(self.root,name+' apron '+str(side),(side*(width/2-.4),top-2,(a+b)/2),(.5,2,b-a-1),'Wood',False)
+            self.box(self.root,name+' apron '+str(side),(side*(width/2-.4),top-2,(a+b)/2),(.5,2,b-a-1),'RoyalIvory',False)
             for z in (a+1.2,b-1.2):
-                self.box(self.root,name+' carved leg '+str(side)+' '+str(z),(side*(width/2-1.2),-11,z),(1.8,20,1.8),'Wood',False)
+                self.box(self.root,name+' carved leg '+str(side)+' '+str(z),(side*(width/2-1.2),-11,z),(1.8,20,1.8),'RoyalIvory',False)
                 self.box(self.root,name+' leg ferrule '+str(side)+' '+str(z),(side*(width/2-1.2),-20.5,z),(2,1,2),'Gold',False)
     def book(self,z,phase):
         self.table('Royal folio desk '+str(z),z,z+16,18,True,-.85)
         g=self.group('Closing royal folio '+str(z),pos=(0,0,z))
         width=18;length=16
         self.box(g,'Walkable book pages',(0,-.25,8),(width,.5,length),'Ivory')
-        self.box(g,'Fixed leather cover',(0,-.65,8),(width+.4,.3,length+.4),'Purple')
+        self.box(g,'Fixed leather cover',(0,-.65,8),(width+.4,.3,length+.4),'BookForest')
         self.box(g,'Gilded book spine',(-width/2,-.1,8),(.5,.8,length+.6),'Gold',False,shape='Cylinder')
         for line in range(7):
             self.box(g,'Printed folio line '+str(line),(0,.015,2+line*1.8),(12,.02,.07),'Slate',False)
         hinge=self.group('Horizontal closing cover',g,(-width/2,.35,8))
-        self.box(hinge,'Moving leather cover',(-width/2,0,0),(width,.3,length+.4),'Purple',False)
+        self.box(hinge,'Moving leather cover',(-width/2,0,0),(width,.3,length+.4),'BookForest',False)
         self.box(hinge,'Moving ivory page',(-width/2,.18,0),(width-.3,.04,length),'Ivory',False)
         self.box(hinge,'Royal cover crest',(-width/2,-.18,0),(4,.04,5),'Gold',False)
         strip=self.box(g,'Book warning bookmark',(width/2-.4,.025,8),(.4,.04,length),'Gold',False)
@@ -449,16 +449,69 @@ class Builder(LegacyBuilder):
         self.d.script(g,'ClosingBook',kit.fields(cover=kit.ref(hinge['tr']),recoveryPoint=kit.ref(recovery['tr']),crushVolume=kit.ref(volume),warningStrip=kit.ref(strip['comps'][2]),openSeconds=6,warningSeconds=1,closeSeconds=.65,closedSeconds=2,reopenSeconds=1.3,respawnSeconds=2,phaseSeconds=phase))
     def library_shelf(self,x,z,side):
         g=self.group('Royal library bookcase '+str(x)+' '+str(z),pos=(x,-22.5,z),rot=kit.yaw(-90 if side<0 else 90))
-        self.box(g,'Walnut bookcase back',(0,17,1),(14,34,1),'Wood')
-        for xside in (-7,7):self.box(g,'Carved upright',(xside,17,0),(1,34,3),'Wood')
-        for level in range(5):
-            y=level*8
-            self.box(g,'Library shelf '+str(level),(0,y+.4,0),(14,.8,3),'Gold',False)
-            if level==4:continue
-            for i in range(9):
-                height=4.5+(i+level)%3
-                self.box(g,'Leather bound volume '+str(level)+' '+str(i),(-5.7+i*1.4,y+.8+height/2,-.5),(1.15,height,2),'Purple' if (i+level)%2 else 'Teal',False)
-                self.box(g,'Book spine gold title '+str(level)+' '+str(i),(-5.7+i*1.4,y+2,-1.52),(.8,.3,.05),'Gold',False)
+        width=22 if z<=-130 or z>=140 else 28
+        height=72 if abs(x)>100 else 49
+        levels=9 if abs(x)>100 else 6
+        self.box(g,'Walnut bookcase back',(0,height/2,1),(width,height,1),'RoyalWalnut')
+        for side_x in (-1,1):
+            xx=side_x*(width/2+.8)
+            self.box(g,'Ivory pilaster '+str(side_x),(xx,height/2,0),(1.6,height,3),'RoyalIvory',False)
+            for j in (-.45,0,.45):self.box(g,'Gold pilaster flute '+str(side_x)+' '+str(j),(xx+j,height/2,-1.6),(.11,height-5,.15),'Gold',False)
+            for y,w in ((1,2.8),(height-2,3.4),(height,3.8)):
+                self.box(g,'Corinthian capital '+str(side_x)+' '+str(y),(xx,y,-.3),(w,1,3.5),'Gold',False)
+            self.box(g,'Capital acanthus '+str(side_x),(xx,height-3,-1.8),(2.4,2.4,.6),'Gold',False,shape='Sphere')
+        step=(height-4)/levels
+        for level in range(levels+1):
+            y=1+level*step
+            self.box(g,'Library shelf '+str(level),(0,y,0),(width,.6,3.4),'Gold',False)
+            if level==levels:continue
+            count=14;spacing=(width-1)/count
+            for i in range(count):
+                h=step-1.1-((i+level)%3)*.35
+                self.box(g,'Leather bound volume '+str(level)+' '+str(i),(-width/2+.6+(i+.5)*spacing,y+.3+h/2,-.5),(spacing*.86,h,2.2),('AntiqueBook','BookForest','BookOxblood','AntiqueBook')[(i+level)%4],False)
+            self.box(g,'Gilt book row band '+str(level),(0,y+1.4,-1.65),(width-1,.12,.04),'Gold',False)
+        self.box(g,'Broken pediment',(0,height+.7,-.2),(width+5,1.1,4),'RoyalIvory',False)
+        self.box(g,'Pediment gilt rim',(0,height+1.35,-.4),(width+5.3,.2,4.2),'Gold',False)
+    def chandelier(self,pos,size=1):
+        import math
+        g=self.group('Royal crystal chandelier '+str(pos),pos=pos);g['scale']=(size,size,size)
+        self.box(g,'Suspension chain',(0,5,0),(.18,5,.18),'Gold',False,shape='Cylinder')
+        self.box(g,'Gilded chandelier heart',(0,0,0),(2,2,2),'Gold',False,shape='Sphere')
+        for i in range(12):
+            a=2*math.pi*i/12;x=math.cos(a)*5;z=math.sin(a)*5
+            self.box(g,'Candle arm '+str(i),(x/2,-.7,z/2),(5,.25,.3),'Gold',False,rot=kit.yaw(-i*30))
+            self.box(g,'Candle cup '+str(i),(x,-.3,z),(1.1,.2,1.1),'Gold',False,shape='Cylinder')
+            self.box(g,'Ivory candle '+str(i),(x,.8,z),(.4,1,.4),'RoyalIvory',False,shape='Cylinder')
+            self.box(g,'Candle flame '+str(i),(x,2,z),(.45,.8,.45),'White',False,shape='Sphere')
+            self.box(g,'Pendant crystal '+str(i),(x,-2,z),(.65,2,.65),'Crystal',False,shape='Sphere')
+    def palace_architecture(self):
+        # Gallery bands frame the rooms while keeping all ornament outside the playable table strip.
+        for span,z,length,height in ((38,-80,140,50),(124,80,180,78)):
+            for side in (-1,1):
+                g=self.group('Palace gallery '+str(span)+' '+str(side),pos=(side*(span-1),-22.5,z),rot=kit.yaw(-90 if side<0 else 90))
+                for y in (3,height-2,height):
+                    self.box(g,'Continuous gilt cornice '+str(y),(0,y,-.4),(length,.7,2.4),'Gold',False)
+                    self.box(g,'Ivory cornice body '+str(y),(0,y-1,-.2),(length,1.4,1.7),'RoyalIvory',False)
+                balcony=height*.6
+                self.box(g,'Upper library gallery deck',(0,balcony,-3),(length,1.1,6),'RoyalWalnut',False)
+                for y in (balcony+1,balcony+5):self.box(g,'Gilt gallery rail '+str(y),(0,y,-6),(length,.35,.4),'Gold',False)
+                for i in range(int(length/5)):
+                    x=-length/2+2.5+i*5
+                    self.box(g,'Balustrade '+str(i),(x,balcony+3,-6),(.3,4,.3),'Gold',False)
+                    self.box(g,'Balustrade pearl '+str(i),(x,balcony+3,-6),(.9,1.1,.4),'RoyalIvory',False,shape='Sphere')
+        # Rear wall panelling and a gilded coffer grid above the chess hall.
+        for x in (-105,-70,-35,35,70,105):
+            self.box(self.root,'Rear royal pilaster '+str(x),(x,14,168),(2,72,2),'RoyalIvory',False)
+            for y in (-18,48,54):self.box(self.root,'Rear gilt capital '+str(x)+' '+str(y),(x,y,167),(4,1,3),'Gold',False)
+        for x in (-120,-80,-40,0,40,80,120):self.box(self.root,'Royal ceiling rib '+str(x),(x,56,80),(1,1.3,180),'Gold',False)
+        for z in (-8,28,64,100,136,168):self.box(self.root,'Royal ceiling cross rib '+str(z),(0,56,z),(246,1.3,1),'Gold',False)
+        for pos,size in (((0,20,-117),.9),((0,20,-59),.9),((0,40,34),1.5),((0,40,106),1.5)):
+            self.chandelier(pos,size)
+        # Parquet is scenery below the fall reset height, never an alternative playable floor.
+        for span,start,end in ((36,-150,-10),(122,-10,170)):
+            for row,z in enumerate(range(start,end,16)):
+                for col,x in enumerate(range(-span,span,16)):
+                    self.box(self.root,'Royal parquet '+str(span)+' '+str(row)+' '+str(col),(x+min(16,span-x)/2,-22.4,z+min(16,end-z)/2),(min(16,span-x)-.2,.12,min(16,end-z)-.2),'AntiqueBook' if (row+col)%2 else 'Wood',False)
     def houseplant(self,parent,name,pos,size=1):
         import math
         g=self.group(name,parent,pos);g['scale']=(size,size,size)
@@ -489,7 +542,7 @@ class Builder(LegacyBuilder):
         for z in (28,123):self.library_shelf(119,z,1)
         for pos,size in (((104,-22,5),1.8),((107,-22,90),2.3),((-105,-22,142),2),((-104,-22,12),1.6)):
             self.houseplant(self.hq,'Giant chess conservatory plant '+str(pos),pos,size)
-        self.box(self.hq,'Reading alcove rug',(105,-21.8,62),(30,.15,36),'Purple',False)
+        self.box(self.hq,'Reading alcove rug',(105,-21.8,62),(30,.15,36),'BookOxblood',False)
         self.box(self.hq,'Reading chaise',(108,-14,65),(12,5,24),'Purple',False)
         self.box(self.hq,'Chaise back',(115,-8,65),(3,14,24),'Wood',False)
         self.box(self.hq,'Reading side table',(99,-10,48),(10,1,8),'Wood',False)
@@ -498,7 +551,7 @@ class Builder(LegacyBuilder):
             self.box(self.hq,'Tall arched window frame',(122,18,z),(1,28,16),'Gold',False)
             self.box(self.hq,'Moonlit window pane',(121.4,18,z),(.1,26,14),'Teal',False)
         self.box(self.hq,'Royal library rear portrait',(32,22,168),(24,30,.5),'Gold',False)
-        self.box(self.hq,'Portrait velvet',(32,22,167.6),(21,27,.2),'Purple',False)
+        self.box(self.hq,'Portrait velvet',(32,22,167.6),(21,27,.2),'BookOxblood',False)
     def typewriter(self):
         import math
         g=self.group('Typewriter stairs - printed command',pos=(0,0,-51));ctx=self.c.context(g)
@@ -577,7 +630,7 @@ class Builder(LegacyBuilder):
         for x in (-160,160):self.wall(self.root,'Square perimeter side '+str(x),(x,20,10),(2,60,320))
         for x in (-83,83):self.wall(self.root,'Square perimeter entrance '+str(x),(x,20,-150),(154,60,2))
         self.wall(self.root,'Entrance header',(0,20,-150),(12,20,2))
-        self.box(self.root,'Operations ceiling',(0,30,-80),(320,1,140),'Slate')
+        self.box(self.root,'Operations ceiling',(0,30,-80),(320,1,140),'RoyalIvory')
         # An open room with discrete tables, not a walled corridor. Gaps stay open for jumps/maps.
         self.box(self.root,'Distant operations room floor',(0,-23,-80),(318,1,138),'Slate',False)
         self.table('Approach floor -146',-146,-129,18)
@@ -608,6 +661,7 @@ class Builder(LegacyBuilder):
         for pos,size in (((28,-22.5,-112),1.5),((29,-22.5,-53),1.8),((-28,-22.5,-35),1.2)):
             self.houseplant(self.root,'Library gallery houseplant '+str(pos),pos,size)
         self.portal()
+        self.palace_architecture()
         entry=self.group('Entry - travel forward',pos=(0,0,-142))
         cps=[self.group('Checkpoint '+str(i),pos=(0,0,z)) for i,z in enumerate((-106,-80,-30),1)]
         end=self.group('Approach exit',pos=(0,0,-4));self.chessEntry=end

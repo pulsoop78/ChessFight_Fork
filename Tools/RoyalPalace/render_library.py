@@ -3,7 +3,8 @@ blender -b -t 4 --python Tools/RoyalPalace/render_library.py
 Cutaway: the near wall and ceiling are hidden for overview. Not a Unity screenshot or physics test.
 """
 from pathlib import Path
-import re, math
+import re, math, sys
+hero_only = "--hero-only" in sys.argv
 import bpy
 from mathutils import Matrix,Quaternion,Vector
 ROOT=Path(__file__).resolve().parents[2]
@@ -25,6 +26,7 @@ def included(go):
  t=trans[go]
  while t:
   g=ref(blocks[t],'m_GameObject');name=names[g]
+  if hero_only and name in ('Operations ceiling','HQ coffered ceiling'):return True
   if name.startswith(('Square perimeter','Operations ceiling','Entrance header','Distant operations','Room floor below','Royal library gallery wall -1','HQ front facade','HQ doorway header','HQ coffered ceiling','Carved ceiling beam','Ceiling cross beam','Narrow portal passage roof')):return False
   if name=='HQ side wall' and matrix(t).translation.x<0:return False
   t=ref(blocks[t],'m_Father')
@@ -42,16 +44,26 @@ def material(guid):
  if c[0]>.7 and c[1]<.7:bs.inputs['Metallic'].default_value=.8
  mats[guid]=m;return m
 C=Matrix(((1,0,0,0),(0,0,1,0),(0,1,0,0),(0,0,0,1)));root_inverse=matrix(trans[root]).inverted()
+# Share primitive meshes and link objects directly; avoid a dependency-graph rebuild per book.
+primitive_meshes={}
+for shape in (10202,10206,10207):
+ if shape==10206:bpy.ops.mesh.primitive_cylinder_add(vertices=24,radius=.5,depth=2)
+ elif shape==10207:bpy.ops.mesh.primitive_uv_sphere_add(segments=16,ring_count=8,radius=.5)
+ else:bpy.ops.mesh.primitive_cube_add(size=1)
+ template=bpy.context.object;mesh=template.data;mesh.materials.append(material('default'));primitive_meshes[shape]=mesh
+ bpy.data.objects.remove(template,do_unlink=True)
 for go,s in gos.items():
  if not included(go):continue
  comps=[blocks[int(c)] for c in re.findall(r'component: \{fileID: (\d+)\}',s)]
  mesh=next((c for c in comps if c.startswith('--- !u!33 ')),None);renderer=next((c for c in comps if c.startswith('--- !u!23 ')),None)
  if mesh is None or renderer is None:continue
  shape=ref(mesh,'m_Mesh');guid=re.search(r'guid: (\w+)',renderer)[1]
- if shape==10206:bpy.ops.mesh.primitive_cylinder_add(vertices=40,radius=.5,depth=2)
- elif shape==10207:bpy.ops.mesh.primitive_uv_sphere_add(segments=24,ring_count=12,radius=.5)
- else:bpy.ops.mesh.primitive_cube_add(size=1)
- o=bpy.context.object;o.name=names[go];o.matrix_world=C@root_inverse@matrix(trans[go])@C;o.data.materials.append(material(guid))
+ o=bpy.data.objects.new(names[go],primitive_meshes.get(shape,primitive_meshes[10202]));bpy.context.collection.objects.link(o)
+ o.matrix_world=C@root_inverse@matrix(trans[go])@C
+ o.material_slots[0].link='OBJECT';o.material_slots[0].material=material(guid)
+ if 'flame' in names[go].lower():
+  emissive=o.material_slots[0].material.copy();node=emissive.node_tree.nodes.get('Principled BSDF')
+  node.inputs['Emission Color'].default_value=(1,.7,.28,1);node.inputs['Emission Strength'].default_value=4;o.material_slots[0].material=emissive
  bevel=o.modifiers.new('Soft machined edges','BEVEL');bevel.width=.035;bevel.segments=2
 # Example glyphs only; actual play generates the labels and clue sequence each round.
 for go,name in names.items():
@@ -59,16 +71,29 @@ for go,name in names.items():
  m=C@root_inverse@matrix(trans[go]);pos=m.translation
  bpy.ops.object.text_add(location=pos);o=bpy.context.object;o.data.body='ABCDEFGHIJKLMNOPQRSTUVWXYZ'[len([x for x in bpy.data.objects if x.type=='FONT'])%26];o.data.align_x='CENTER';o.data.align_y='CENTER';o.data.size=1.2;o.data.extrude=.002;o.data.materials.append(material('ink'))
 # Floor and a neutral studio environment expose the key wells and the entrance.
-bpy.ops.mesh.primitive_plane_add(size=400,location=(0,-80,-23));floor=bpy.context.object;floor.data.materials.append(material('floor'))
+bpy.ops.mesh.primitive_plane_add(size=600,location=(0,5,-23));floor=bpy.context.object;floor.data.materials.append(material('floor'))
 scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=32;scene.cycles.use_denoising=False
-scene.world.color=(.3,.3,.3)
+scene.world.color=(.45,.4,.32)
 for pos,power,size in [((0,-90,130),200000,100),((-120,80,130),200000,90),((70,130,100),200000,100),((25,-140,60),90000,50)]:
  bpy.ops.object.light_add(type='AREA',location=pos);o=bpy.context.object;o.data.energy=power;o.data.shape='DISK';o.data.size=size;o.rotation_euler=(Vector((0,10,0))-o.location).to_track_quat('-Z','Y').to_euler()
+for go,name in names.items():
+ if name.startswith('Royal crystal chandelier'):
+  pos=(C@root_inverse@matrix(trans[go])).translation
+  bpy.ops.object.light_add(type='POINT',location=pos);bpy.context.object.data.energy=3500;bpy.context.object.data.color=(1,.72,.35);bpy.context.object.data.shadow_soft_size=4
+if hero_only:
+ scene.cycles.max_bounces=4;scene.cycles.samples=24
+ for z in (-128,-94,-55):
+  bpy.ops.object.light_add(type='AREA',location=(-3,z,27));lamp=bpy.context.object
+  lamp.data.energy=70000;lamp.data.shape='DISK';lamp.data.size=24;lamp.data.color=(1,.92,.8)
+  lamp.rotation_euler=(Vector((0,z,0))-lamp.location).to_track_quat('-Z','Y').to_euler()
 bpy.ops.object.camera_add();camera=bpy.context.object;camera.data.type='ORTHO';scene.camera=camera
 scene.render.resolution_x=1400;scene.render.resolution_y=1100;scene.render.resolution_percentage=100
-for filename,pos,target,scale in [
+views = [
  ('ROYAL_LIBRARY_OVERVIEW.png',(-270,-330,320),(0,5,0),465),
  ('ROYAL_CHESS_LIBRARY.png',(-230,-115,210),(0,78,0),310),
- ('ROYAL_LIBRARY_PREVIEW.png',(-135,-190,135),(0,-80,0),195)]:
+ ('ROYAL_LIBRARY_PREVIEW.png',(-135,-190,135),(0,-80,0),195)]
+if hero_only: views=[('ROYAL_LIBRARY_INTERIOR.png',(-4,-132,10),(2,-65,15),195)]
+for filename,pos,target,scale in views:
+ camera.data.type='PERSP' if hero_only else 'ORTHO';camera.data.lens=22
  camera.location=pos;camera.rotation_euler=(Vector(target)-camera.location).to_track_quat('-Z','Y').to_euler();camera.data.ortho_scale=scale
  scene.render.filepath=str(ROOT/'Docs/PawnRush'/filename);bpy.ops.render.render(write_still=True)

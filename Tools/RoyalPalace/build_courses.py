@@ -73,6 +73,7 @@ Material:
     return guid(path)
 
 MAT={name:material(name,color) for name,color in {
+    'RoyalIvory':(.9,.85,.73),'RoyalWalnut':(.14,.065,.03),'AntiqueBook':(.42,.29,.14),'BookForest':(.045,.13,.075),'BookOxblood':(.24,.05,.035),'Crystal':(.75,.9,.94),
     'EnamelBlack':(.025,.028,.03),'TypewriterSteel':(.55,.58,.6),
     'Ivory':(.83,.78,.63),'Slate':(.15,.21,.29),'Gold':(.88,.59,.16),
     'Purple':(.27,.12,.39),'Wood':(.27,.13,.08),'Teal':(.12,.42,.40),
