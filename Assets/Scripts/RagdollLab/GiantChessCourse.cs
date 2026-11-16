@@ -57,7 +57,7 @@ namespace ChessFight.RagdollLab
         bool Occupied(int s) => pieces[s] && !(phase == 1 && pieces[s] == moving);
         void RefreshOccupiedMarks()
         {
-            for (int s = 0; s < 64; s++) occupiedMarks[s].SetActive(Occupied(s));
+            for (int s = 0; s < 64; s++) occupiedMarks[s].SetActive(false);
         }
         Vector3 Spawn(int i) => approach != null && approach.Available && !approach.Entered(i) ? approach.Spawn(i) : transform.TransformPoint(new Vector3((i / 6 == 0 ? -1 : 1) * tileSize + (i % 3 - 1) * 2.5f, 0, -chessSpawnDepth - i % 2 * 3));
         Material Mat(Color color) { var m = LitMaterials.NewLit(color); materials.Add(m); return m; }
@@ -167,6 +167,7 @@ namespace ChessFight.RagdollLab
             if (prefab)
             {
                 var model = Instantiate(prefab, root.transform, false); // Preserve the importer axis correction.
+                foreach (var solid in model.GetComponentsInChildren<Collider>()) solid.enabled = false;
                 var renderers = model.GetComponentsInChildren<Renderer>();
                 Bounds bounds = renderers[0].bounds;
                 foreach (var r in renderers)
@@ -190,7 +191,7 @@ namespace ChessFight.RagdollLab
                 var cross = Shape("King cross vertical", SquareLocal(square) + Vector3.up * (height + 2), new Vector3(1, 5, 1), gold, solid: false); cross.transform.SetParent(root.transform, true);
                 cross = Shape("King cross horizontal", SquareLocal(square) + Vector3.up * (height + 2.5f), new Vector3(4, 1, 1), gold, solid: false); cross.transform.SetParent(root.transform, true);
             }
-            var collider = root.AddComponent<BoxCollider>(); collider.size = new Vector3(tileSize, Mathf.Max(32, height), tileSize); collider.center = Vector3.up * collider.size.y * .5f;
+            var collider = root.AddComponent<BoxCollider>(); collider.size = new Vector3(tileSize, Mathf.Max(32, height), tileSize); collider.center = Vector3.up * collider.size.y * .5f; collider.enabled = false;
             root.transform.rotation = transform.rotation * Quaternion.Euler(0, light ? -90 : 90, 0);
             return root;
         }
@@ -255,27 +256,13 @@ namespace ChessFight.RagdollLab
             if (pieces[to]) { pieces[to].GetComponent<Collider>().enabled = false; Destroy(pieces[to]); }
             int captured=int.Parse(score[ply][6]);
             if(captured>=0 && captured!=to && pieces[captured]) { pieces[captured].GetComponent<Collider>().enabled=false; Destroy(pieces[captured]);pieces[captured]=null; }
-            pieces[to] = moving; pieces[from] = null; moving.transform.position = Square(to); moving.GetComponent<Collider>().enabled = true;
+            pieces[to] = moving; pieces[from] = null; moving.transform.position = Square(to); moving.GetComponent<Collider>().enabled = false;
             if(score[ply][7]!=".") { moving.GetComponent<Collider>().enabled=false;Destroy(moving); moving=BuildPiece(score[ply][7][0],to);pieces[to]=moving; }
             if (rookFrom >= 0) { pieces[rookTo] = pieces[rookFrom]; pieces[rookFrom] = null; pieces[rookTo].transform.position = Square(rookTo); }
-            // Evacuate before the next physics step: a full-square collider must not spawn inside a ragdoll.
-            phase = 2;
+            // Landing still hits a pawn, but occupied squares never block or teleport walkers.
             for (int i = 0; i < players.Count; i++)
-                if (OnSquare(players[i], to) || (rookTo >= 0 && OnSquare(players[i], rookTo)))
-                {
-                    Vector3 p = players[i].Hips.position;
-                    Vector3 local = transform.InverseTransformPoint(p);
-                    Vector3 safe = transform.TransformPoint(new Vector3(Mathf.Clamp(local.x, -tileSize * 4 + 2, tileSize * 4 - 2), 0, -3));
-                    float distance = (safe - p).sqrMagnitude;
-                    for (int s = 0; s < 64; s++) if (!Occupied(s))
-                    {
-                        Vector3 candidate = Square(s);
-                        float score = (candidate - p).sqrMagnitude + (Vector3.Dot(candidate - p, transform.forward) > 0 ? tileSize : 0);
-                        if (score < distance) { distance = score; safe = candidate; }
-                    }
-                    players[i].Teleport(safe + Vector3.up * (players[i].standHeight + .1f), transform.forward);
+                if (bookRecovery[i] <= 0 && (OnSquare(players[i], to) || (rookTo >= 0 && OnSquare(players[i], rookTo))))
                     players[i].TakeHit(-transform.forward * knockbackSpeed + Vector3.up * upwardSpeed, 1, 0, true);
-                }
             RefreshOccupiedMarks();
             attack = ulong.Parse(score[ply][4], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
             for (int s = 0; s < 64; s++) warnings[s].SetActive((attack & (1UL << s)) != 0);
@@ -383,9 +370,6 @@ namespace ChessFight.RagdollLab
                 var future = p + d * 4;
                 var localFuture = transform.InverseTransformPoint(future);
                 if (Mathf.Abs(localFuture.x) > tileSize * 4 - 2 || localFuture.z < -17) continue;
-                int square = BoardSquare(future);
-                bool blocked = square >= 0 && Occupied(square);
-                if (blocked) continue;
                 float value = Vector3.Dot(d, transform.forward) * 2 - (Dangerous(future) ? 8 : 0) + Vector3.Dot(d, botGoals[i]) * .2f;
                 if (value > bestScore) { bestScore = value; best = d; }
             }

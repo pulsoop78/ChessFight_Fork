@@ -9,7 +9,7 @@ namespace ChessFight.ProtectKing
         [SerializeField, Min(0)] float pressDepth = .14f;
         [SerializeField, Min(.01f)] float pressSpeed = .8f;
         [SerializeField, Min(.01f)] float returnSpeed = 1.5f;
-        [SerializeField, Min(0)] float jumpBonus = 1.2f;
+        [SerializeField, Min(0)] float jumpBonus = 2f;
         Rigidbody body; Vector3 rest; float depth, velocity, releaseUntil; bool pressed;
         public Quaternion DeltaRotation => Quaternion.identity;
         public Vector3 PointVelocity(Vector3 point) => transform.up * velocity;

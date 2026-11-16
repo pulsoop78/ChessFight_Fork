@@ -26,7 +26,7 @@ namespace ChessFight.ProtectKing
         float clock;
         public void ResetCycle() { clock = phaseSeconds; Apply(); }
         void Awake() { tint = new MaterialPropertyBlock(); ResetCycle(); }
-        // Opening remains hazardous until the cover has lifted clear of a standing pawn.
+        // Only the closing strike can crush; a closed book is not a persistent kill volume.
         public static float Fold(float t, float open, float warning, float closing, float shut, float opening)
         {
             float cycle = open + warning + closing + shut + opening;
@@ -55,8 +55,11 @@ namespace ChessFight.ProtectKing
         void FixedUpdate()
         {
             if (ObstacleClock.Shared || !Simulating) return;
+            float previous = Fold(clock, Mathf.Max(.5f,openSeconds), Mathf.Max(.2f,warningSeconds),
+                Mathf.Max(.1f,closeSeconds), Mathf.Max(.2f,closedSeconds), Mathf.Max(.1f,reopenSeconds));
             clock += Time.fixedDeltaTime;
-            if (Apply() < .9f || crushVolume == null || recoveryPoint == null) return;
+            float current = Apply();
+            if (previous >= .9f || current < .9f || current <= previous || crushVolume == null || recoveryPoint == null) return;
             seen.Clear();
             var s = crushVolume.transform.lossyScale;
             int count = Physics.OverlapBoxNonAlloc(crushVolume.transform.TransformPoint(crushVolume.center),
@@ -65,7 +68,8 @@ namespace ChessFight.ProtectKing
             for (int i=0;i<count;i++)
             {
                 var actor=ImportedObstacleActor.Find(overlaps[i]);
-                if(actor==null || !actor.CanReceiveObstacle || !seen.Add(actor)) continue;
+                if(actor==null || !actor.CanReceiveObstacle || !seen.Add(actor) ||
+                    !actor.TryGetGroundCollider(out var support) || !support.transform.IsChildOf(transform)) continue;
                 Vector3 p=crushVolume.transform.InverseTransformPoint(actor.Position)-crushVolume.center;
                 Vector3 h=crushVolume.size*.5f;
                 if(Mathf.Abs(p.x)>h.x || Mathf.Abs(p.y)>h.y || Mathf.Abs(p.z)>h.z) continue;

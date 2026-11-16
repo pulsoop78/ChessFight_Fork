@@ -29,7 +29,7 @@ namespace ChessFight.Network
                 int columns = RowLength(row), start = RowStart(row);
                 int[] candidates = new int[columns]; int count = 0;
                 for (int col = 0; col < columns; col++)
-                    if (row == 0 || Math.Abs(col - (columns - 1) * .5f - previousX) <= .5f) candidates[count++] = col;
+                    if (row == 0 || Math.Abs(col - (columns - 1) * .5f - previousX) <= 2f) candidates[count++] = col;
                 int safe = candidates[random.Next(count)];
                 char[] pool = new char[26 - RowCount]; Array.Copy(alphabet, RowCount, pool, 0, pool.Length);
                 for (int i = pool.Length - 1; i > 0; i--) { int j = random.Next(i + 1); char c = pool[i]; pool[i] = pool[j]; pool[j] = c; }

@@ -39,8 +39,8 @@ class StraightWarRoom(unittest.TestCase):
         self.assertEqual(len(walls),2)
         for _,f,b in t.scripts_of('WarRoomScoreLabel'):
             p=transform(t.data,t.owners[number(f['m_GameObject'])])
-            self.assertAlmostEqual(abs(p[0]),37)
-        self.assertEqual(len([name for name in t.names.values() if name.startswith('Royal library bookcase')]),13)
+            self.assertAlmostEqual(abs(p[0]),32)
+        self.assertEqual(len([name for name in t.names.values() if name.startswith('Royal library bookcase')]),34)
 
     def test_concept_obstacles_and_preview_sources(self):
         t=self.t

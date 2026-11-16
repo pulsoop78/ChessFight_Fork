@@ -447,11 +447,11 @@ class Builder(LegacyBuilder):
         volume=self.d.box(g,size=(width,4,16),center=(0,1.7,8),trigger=True)
         recovery=self.group('Previous safe book point',g,(0,0,-6 if z==-100 else -4))
         self.d.script(g,'ClosingBook',kit.fields(cover=kit.ref(hinge['tr']),recoveryPoint=kit.ref(recovery['tr']),crushVolume=kit.ref(volume),warningStrip=kit.ref(strip['comps'][2]),openSeconds=6,warningSeconds=1,closeSeconds=.65,closedSeconds=2,reopenSeconds=1.3,respawnSeconds=2,phaseSeconds=phase))
-    def library_shelf(self,x,z,side):
-        g=self.group('Royal library bookcase '+str(x)+' '+str(z),pos=(x,-22.5,z),rot=kit.yaw(-90 if side<0 else 90))
-        width=22 if z<=-130 or z>=140 else 28
-        height=72 if abs(x)>100 else 49
-        levels=9 if abs(x)>100 else 6
+    def library_shelf(self,x,z,side,width=None,height=None,rotation=None):
+        g=self.group('Royal library bookcase '+str(x)+' '+str(z),pos=(x,-22.5,z),rot=kit.yaw(rotation if rotation is not None else (-90 if side<0 else 90)))
+        width=width if width is not None else (22 if z<=-130 or z>=140 else 28)
+        height=height if height is not None else (72 if abs(x)>100 else 49)
+        levels=9 if height>50 else 6
         self.box(g,'Walnut bookcase back',(0,height/2,1),(width,height,1),'RoyalWalnut')
         for side_x in (-1,1):
             xx=side_x*(width/2+.8)
@@ -538,8 +538,10 @@ class Builder(LegacyBuilder):
         self.d.script(self.root,'RoyalLibraryPortal',kit.fields(threshold=kit.ref(trigger['tr']),veil=kit.ref(veil['go']),revealSeconds=1.6,fovExpansion=16,cameraPullback=7))
     def royal_chess_library(self):
         # Deliberately different wall rhythms: west archives, east reading alcoves and plants.
-        for z in (12,43,105,145):self.library_shelf(-119,z,-1)
-        for z in (28,123):self.library_shelf(119,z,1)
+        for z in (4,34,64,94,124,154):self.library_shelf(-119,z,-1,width=28)
+        for z in (5,34,112,145):self.library_shelf(119,z,1,width=28)
+        for x in (-106,-77,-48,-19,19,48,77,106):self.library_shelf(x,166,1,width=22 if abs(x)==19 else 26,height=72,rotation=0)
+        for x in (-104,-74,-44,44,74,104):self.library_shelf(x,-7,1,width=26,height=72,rotation=180)
         for pos,size in (((104,-22,5),1.8),((107,-22,90),2.3),((-105,-22,142),2),((-104,-22,12),1.6)):
             self.houseplant(self.hq,'Giant chess conservatory plant '+str(pos),pos,size)
         self.box(self.hq,'Reading alcove rug',(105,-21.8,62),(30,.15,36),'BookOxblood',False)
@@ -550,8 +552,6 @@ class Builder(LegacyBuilder):
         for z in (65,88):
             self.box(self.hq,'Tall arched window frame',(122,18,z),(1,28,16),'Gold',False)
             self.box(self.hq,'Moonlit window pane',(121.4,18,z),(.1,26,14),'Teal',False)
-        self.box(self.hq,'Royal library rear portrait',(32,22,168),(24,30,.5),'Gold',False)
-        self.box(self.hq,'Portrait velvet',(32,22,167.6),(21,27,.2),'BookOxblood',False)
     def typewriter(self):
         import math
         g=self.group('Typewriter stairs - printed command',pos=(0,0,-51));ctx=self.c.context(g)
@@ -575,17 +575,17 @@ class Builder(LegacyBuilder):
             height=(row+1)*.32;z=row*2.8+1.4
             columns=5 if row%2==0 else 4
             for col in range(columns):
-                x=(col-(columns-1)*.5)*3
+                x=(col-(columns-1)*.5)*2.4
                 self.box(g,'Key stem '+str(row)+'-'+str(col),(x,height*.5-.3,z),(.3,max(.1,height*.5),.3),'Gold',False,shape='Cylinder')
                 key=self.group('Key '+str(row)+'-'+str(col),g,(x,height-.15,z))
                 self.d.rigidbody(key,True)
-                keys.append(self.d.script(key,'TypewriterKey',kit.fields(pressDepth=.14,pressSpeed=.8,returnSpeed=1.5,jumpBonus=1.2)))
-                rim=self.box(key,'Round brass key rim',(0,0,0),(2.8,.15,2.8),'Gold',True,shape='Cylinder')
-                self.box(key,'Black key bezel',(0,.145,0),(2.64,.018,2.64),'EnamelBlack',False,shape='Cylinder')
-                face=self.box(key,'Ivory letter disk',(0,.165,0),(2.42,.012,2.42),'Ivory',False,shape='Cylinder')
+                keys.append(self.d.script(key,'TypewriterKey',kit.fields(pressDepth=.14,pressSpeed=.8,returnSpeed=1.5,jumpBonus=2)))
+                rim=self.box(key,'Round brass key rim',(0,0,0),(2.3,.15,2.3),'Gold',True,shape='Cylinder')
+                self.box(key,'Black key bezel',(0,.145,0),(2.18,.018,2.18),'EnamelBlack',False,shape='Cylinder')
+                face=self.box(key,'Ivory letter disk',(0,.165,0),(2.04,.012,2.04),'Ivory',False,shape='Cylinder')
                 visuals.append(face['comps'][2])
                 faces.append(self.group('Key letter',key,(0,.195,0),kit.pitch(90))['tr'])
-                areas.append(self.d.box(key,size=(2.8,.9,2.8),center=(0,.2,0),trigger=True))
+                areas.append(self.d.box(key,size=(2.3,.9,2.3),center=(0,.2,0),trigger=True))
         # The keyboard rises into the machine, through a high clear opening under its type basket.
         for i in range(17):
             angle=(i-8)*5
@@ -655,8 +655,8 @@ class Builder(LegacyBuilder):
         # Broad library walls leave the table route open, with framed score previews hung between shelves.
         for side in (-1,1):
             self.wall(self.root,'Royal library gallery wall '+str(side),(side*38,4,-80),(1.5,54,140))
-            for z in ((-140,-102,-64,-24) if side<0 else (-135,-88,-20)):self.library_shelf(side*35,z,side)
-        for pos,ply,rotation in (((-37,4,-121),0,-90),((37,4,-121),.25,90),((-37,4,-45),.55,-90),((37,4,-45),.9,90)):
+            for z in ((-137,-109,-81,-53,-25) if side<0 else (-136,-107,-78,-49,-22)):self.library_shelf(side*35,z,side,width=24)
+        for pos,ply,rotation in (((-32,4,-121),0,-90),((32,4,-121),.25,90),((-32,4,-45),.55,-90),((32,4,-45),.9,90)):
             self.exhibit(pos,ply,rotation)
         for pos,size in (((28,-22.5,-112),1.5),((29,-22.5,-53),1.8),((-28,-22.5,-35),1.2)):
             self.houseplant(self.root,'Library gallery houseplant '+str(pos),pos,size)

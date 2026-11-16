@@ -44,7 +44,7 @@ class TypewriterTests(unittest.TestCase):
             start=(0,5,9,14,18)[row]
             self.assertEqual(r.names[go],f'Key {row}-{index-start}')
             pos=room.transform(r.data,r.owners[go])
-            self.assertAlmostEqual(pos[0],(index-start-(2 if row%2==0 else 1.5))*3)
+            self.assertAlmostEqual(pos[0],(index-start-(2 if row%2==0 else 1.5))*2.4)
             self.assertEqual(owner(area),go)
             key_transform=r.owners[go]
             for child in (face,str(r.owners[owner(visual)])):
@@ -98,3 +98,11 @@ class TypewriterTests(unittest.TestCase):
             floors=[name for name,lo,hi,moving in r.boxes if not moving and name not in ('Walkable parchment','Walkable book pages') and lo[0]<0<hi[0] and lo[2]<z<hi[2] and -.1<hi[1]<.1]
             self.assertEqual(floors,[],(z,floors))
         self.assertFalse(any(n.startswith('Side room scenery floor') for n in names))
+
+    def test_widest_staggered_jump_has_edge_to_edge_range(self):
+        import math
+        # A boundary jump uses both round keys' edges; this is a trajectory budget, not PhysX verification.
+        speed=2.5;up=3.8+2-.8;gravity=9.81;rise=.32
+        flight=(up+math.sqrt(up*up-2*gravity*rise))/gravity
+        gap=math.hypot(1.5*2.4,2.8)-2.3
+        self.assertGreater(speed*flight,gap)

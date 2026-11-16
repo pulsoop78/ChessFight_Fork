@@ -32,7 +32,9 @@ for x in (-86,86):
  rect(x-11,51,x+11,77,'#866048','#c4a474');text((point(x,64)[0]-19,point(x,64)[1]-13),'GM',18)
 for go,name in names.items():
  p=transform(records,trans[go]);x,z=p[0],p[2]
- if name.startswith('Royal library bookcase'):rect(x-1.8,z-7,x+1.8,z+7,'#c19152','#ead0a0')
+ if name.startswith('Royal library bookcase'):
+  if z==166 or z==-7:rect(x-7,z-1.8,x+7,z+1.8,'#c19152','#ead0a0')
+  else:rect(x-1.8,z-7,x+1.8,z+7,'#c19152','#ead0a0')
  elif name.startswith(('Giant chess conservatory plant','Library gallery houseplant')):
   px,py=point(x,z)
   for dx,dy in ((-5,0),(5,0),(0,-5),(0,5)):d.ellipse((px+dx-8,py+dy-8,px+dx+8,py+dy+8),fill='#4a9775')

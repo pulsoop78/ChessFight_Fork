@@ -38,19 +38,19 @@ class Harness {
  static void Set(object o,string field,object v)=>o.GetType().GetField(field,BindingFlags.NonPublic|BindingFlags.Instance).SetValue(o,v);
  static void Tick(TypewriterStairs s,float time){Time.time=time;typeof(TypewriterStairs).GetMethod("FixedUpdate",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(s,null);}
  static void Main(){
-  var random=new System.Random(51);string previous=null;int changes=0;
+  var random=new System.Random(51);string previous=null;int changes=0,wideLeft=0,wideRight=0;
   for(int seed=0;seed<2000;seed++) {
    var layout=TypewriterMemory.Generate(new System.Random(seed));Check(layout.Sequence.Length==5&&layout.Keys.Length==23,"Layout size");
    Check(new HashSet<char>(layout.Sequence).Count==5,"Distinct random letters");float last=100;
    for(int row=0;row<5;row++) {int safe=-1,count=0;var unique=new HashSet<char>();
     int columns=TypewriterMemory.RowLength(row),start=TypewriterMemory.RowStart(row);
     for(int col=0;col<columns;col++){unique.Add(layout.Keys[start+col]);if(layout.Safe(start+col)){safe=col;count++;}}
-    Check(count==1&&unique.Count==columns,"One safe distinct key per row");float x=safe-(columns-1)*.5f;Check(row==0||Math.Abs(x-last)<=.5f,"Reachable staggered columns");last=x;
+    Check(count==1&&unique.Count==columns,"One safe distinct key per row");float x=safe-(columns-1)*.5f;Check(row==0||Math.Abs(x-last)<=2f,"Reachable staggered columns");if(row>0&&x-last < -1)wideLeft++;if(row>0&&x-last > 1)wideRight++;last=x;
    }
    Check(!layout.Safe(-1)&&!layout.Safe(23),"Invalid indices");if(previous!=layout.Sequence)changes++;previous=layout.Sequence;
    Check(layout.Keys==TypewriterMemory.Generate(new System.Random(seed)).Keys,"Repeatable seed");
   }
-  Check(changes>1950,"Random rounds differ");
+  Check(changes>1950,"Random rounds differ");Check(wideLeft>0&&wideRight>0,"Two candidates on both sides appear across rounds");
   var puzzle=TypewriterMemory.Generate(random);var stairs=new TypewriterStairs();Set(stairs,"layout",puzzle);
   int safeIndex=0;while(!puzzle.Safe(safeIndex))safeIndex++;int wrongIndex=safeIndex==0?1:0;
   var areas=new BoxCollider[23];var keys=new TypewriterKey[23];
@@ -80,7 +80,7 @@ class Harness {
   for(int i=0;i<20;i++)step.Invoke(spring,null);
   float depth=(float)typeof(TypewriterKey).GetField("depth",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(spring);
   Check(Math.Abs(depth-.14f)<.001f,"Key depresses under load");
-  Check(Math.Abs(spring.TakeJumpBonus(Vector3.one)-1.2f)<.001f,"Small bonus on explicit jump");Check(spring.TakeJumpBonus(Vector3.one)==0,"Bonus cannot stack");
+  Check(Math.Abs(spring.TakeJumpBonus(Vector3.one)-2f)<.001f,"Small bonus on explicit jump");Check(spring.TakeJumpBonus(Vector3.one)==0,"Bonus cannot stack");
   spring.SetPressed(false);Time.time=4;for(int i=0;i<20;i++)step.Invoke(spring,null);
   Check(spring.TakeJumpBonus(Vector3.one)==0,"Walking off does not launch");
   var text=new TextMesh[23];for(int i=0;i<23;i++)text[i]=new TextMesh();var clues=new TextMesh[5];for(int i=0;i<5;i++)clues[i]=new TextMesh();Set(stairs,"keyText",text);Set(stairs,"clueText",clues);
@@ -93,11 +93,16 @@ class Harness {
   Check(Math.Abs(ClosingBook.Fold(10.3f,6,1,.65f,2,1.3f)-.5f)<.001f,"Opening reverses hinge");
   var book=new ClosingBook();Set(book,"cover",new Transform());Set(book,"recoveryPoint",new Transform());
   Set(book,"crushVolume",new BoxCollider{center=new Vector3(0,1.7f,8),size=new Vector3(18,4,16)});
-  Set(book,"clock",8f);int crushes=0;book.Crushed+=(victim,point,seconds)=>{crushes++;Check(seconds==2,"Recovery delay");};
+  Set(book,"clock",7.58f);int crushes=0;book.Crushed+=(victim,point,seconds)=>{crushes++;Check(seconds==2,"Recovery delay");};
   actor.Position=new Vector3(0,0,8);Physics.found=new[]{new Collider{actor=actor},new Collider{actor=actor}};
   var bookStep=typeof(ClosingBook).GetMethod("FixedUpdate",BindingFlags.NonPublic|BindingFlags.Instance);
   bookStep.Invoke(book,null);Check(crushes==0,"Paused book cannot crush");book.Simulating=true;
-  bookStep.Invoke(book,null);Check(crushes==1,"Ragdoll colliders deduplicated");
+  actor.support=new Collider();actor.support.transform.parent=book.transform;
+  for(int i=0;i<4;i++)bookStep.Invoke(book,null);Check(crushes==1,"Ragdoll colliders deduplicated");
+  Set(book,"clock",8f);actor.Grounded=false;bookStep.Invoke(book,null);Check(crushes==1,"Airborne impact against shut book ignored");
+  actor.Grounded=true;Set(book,"clock",8f);bookStep.Invoke(book,null);Check(crushes==1,"Grounded late arrival on shut book ignored");
+  Set(book,"clock",9.7f);bookStep.Invoke(book,null);Check(crushes==1,"Opening cover cannot crush");
+  Set(book,"clock",7.58f);actor.support=new Collider();for(int i=0;i<4;i++)bookStep.Invoke(book,null);Check(crushes==1,"Adjacent support is not a book crush");
   actor.Position=new Vector3(10,0,8);bookStep.Invoke(book,null);Check(crushes==1,"Outside-page feet excluded");
   Console.WriteLine("PASS: 2000 memory layouts, row rules, hits, key depression, jump-only rebound and new-round clues");
  }
