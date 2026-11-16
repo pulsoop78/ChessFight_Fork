@@ -34,9 +34,9 @@
 
 | 계층/컴포넌트 | 구현된 동작 | 주요 조절값 |
 |---|---|---|
-| `01 Random spear floor` / `ArmorySpearFloor` | 24칸 창, 예고→상승→복귀. 매 판 연결된2칸 폭 피난 경로를 정하고 파동마다 그 밖의 칸을 무작위 변경. 발 위치/높이로 판정하고 한 파동에 캐릭터당1회 피격 | Warning/Raised/Rest Seconds, Spear Height, Knockback/Upward Speed, Stun Seconds |
+| `01 Random spear floor` / `ArmorySpearFloor` | 24칸 창, 예고→상승→복귀. 매 판 연결된1칸 폭 피난 경로를 정하고 파동마다 그 밖의 칸을 무작위 변경. 발 위치/높이로 판정하고 한 파동에 캐릭터당1회 피격 | Warning/Raised/Rest Seconds, Spear Height, Knockback/Upward Speed, Stun Seconds |
 | `02a/02b Dullahan` / `ArmoryDullahan` | 대검의 좁고 긴 직사각형, 도끼의 넓은 부채꼴. 들어올림→급강하→유지→회수. 실제 무기 길이와 예고/충격 표시를 맞추고 주기당1회 피격 | Windup/Strike/Hold/Recovery/Rest Seconds, Phase Offset, Push/Upward Speed, Stun Seconds, Axe Half Angle/Attack Reach |
-| `03 Carry shield crossbow gallery` / `ArmoryCrossbowGallery` | 예고 후 석궁3개 발사. 화살9개 시각 풀과 이동 구간 Raycast. 방패·엄폐물에 막히고 지정된 사격 영역 밖에서는 피해 없음 | Volley/Telegraph Seconds, Arrow Speed, Hit Speed, Stun, Hit Cooldown |
+| `03 Carry shield crossbow gallery` / `ArmoryCrossbowGallery` | 예고 후 좌우 석궁6개 발사. 화살18개 시각 풀과 이동 구간 Raycast. 방패·엄폐물에 막히고 지정된 사격 영역 밖에서는 피해 없음 | Volley/Telegraph Seconds, Arrow Speed, Hit Speed, Stun, Hit Cooldown |
 | 방패3개 / `ArmoryCarryShield` | 기존 손 잡기 관절로 운반. 분실/방치/구역 이탈 또는 장기 대여 시 회수. Collider를 끈 뒤 기존 손이 놓기를 기다리고 관절이 없을 때만 복귀 | Recovery Seconds, Abandoned Seconds, Lost Below Spawn, Maximum Loan Seconds |
 | `04 Watching armour gallery` / `ArmoryWatcherGallery` | 번갈아 고개를 돌리는 갑옷2개. 실제 눈에서 Raycast해3.5m 엄폐물의 가림 확인. 구역/거리/각도 안에서 자발적 이동 어댑터가 참인 경우만 피격 | Look/Look Away Seconds, Range, View Angle, Hit Speed, Stun, Hit Cooldown |
 
@@ -49,7 +49,7 @@
 ## 자동 확인과 실제 확인의 구분
 
 - `python3 Tools/RoyalPalace/build_armory_trial.py --check`: 새 프리팹/씬/무채색 재질이 생성 원본과 일치하는지 확인한다. 다시 생성하려면 `--overwrite`지만 **Unity에서 수동 편집한 새 프리팹의 값이 덮이므로 저장본을 먼저 보존**한다.
-- 자산 검사: 모든 참조, 단일 프리팹 인스턴스,4종 바인딩,24창/2듀라한/3방패/9화살,6개CP, 경사로의11.8m 폭/65단계 높이 연결,4단 계단,3개 무채색 재질/조명.
+- 자산 검사: 모든 참조, 단일 프리팹 인스턴스,4종 바인딩,24창/2듀라한/3방패/6석궁/18화살,6개CP, 경사로의11.8m 폭/65단계 높이 연결,4단 계단,3개 무채색 재질/조명.
 - 실제 C# 컨트롤러를 stand-in으로 실행: 10,000창 파동 안전 경로·예고/피격/쿨다운, 듀라한 각도/도끼 거리/타격, 화살 경계/가림/방패 회수, 감시 시선/엄폐/초기화, 캐릭터 의도 판정31조건.
 - Linux Roslyn 외부 런타임 컴파일은 Unity 참조 DLL로 타입/API 연결을 검사한다. 실제 Unity Editor/PhysX 실행 검증이 아니다.
 
@@ -61,3 +61,14 @@ Unity에서 확인할 순서:
 4. 4번에서 시선 안 정지/전진, 진열대 엄폐, 상대에게 밀리거나 잡힌 상태의 감시 제외를 확인한다.
 5. Tab으로 캐릭터를 바꾸고 C4 자동 기록·낙하1.5초 복구·F3 초기화·Esc 시계 정지, 출구까지 연속 주행을 확인한다.
 6. 실제12인/멀티플레이 성능 및 평균4~5분 통과 시간은 이 오프라인 테스트 결과와 구분해서 측정한다.
+
+
+## 난도 조정 · 2026-11-16
+
+창은 4칸 가로줄마다2~3개를 상승시킨다. 한 판의1칸 안전선은 일자로 연결해 몸이 지나갈 폭을 보장하고, 그 밖의 상승 칸을 파동마다 바꾼다. F3로 안전선 위치도 달라진다.
+
+듀라한은 기존6초 주기에서3.5초(휴식0.8+준비1.1+타격0.25+유지0.55+회수0.8)로 변경했다. 두 무기는1.75초 위상 차이를 둔다.
+
+석궁은 좌/우3개씩 총6개다. 좌3개→우3개로 교대하며, 각 사격의 예고가 시작될 때 해당 구역의 가장 가까운 플레이어 쪽 조준선을 고정한다. 1초 조준선 예고 뒤 화살은 고정된 방향으로 직진하며 추적하지 않는다. 두 방향이 동시에 방패 하나를 관통하도록 설계하지 않았다. 기존 우클릭으로 실제 방패를 잡고, 마우스로 시점을 돌리면 방패 수평 방향이 조작 캐릭터의 조준 방향을 따른다. 면이 화살을 가로막으면 차단되며 옆면을 내주면 맞을 수 있다.
+
+감시 갑옷은(92,140)/(112,149)로 간격을 늘렸다. 정면 감시2초→0.8초에180°뒤돌기→뒤돌아3.8초 유지→0.8초 정면 복귀→바닥 예고 점멸1.2초 순서다. 복귀/예고 중에는 발각시키지 않고, 예고 뒤 감시 단계에서만 기존 자발적 이동 조건을 검사한다. 회색 시선 발판은 방향·거리/구역에 맞춰 저장했다. 사용자 실제 조작감/난도 확인은 대기다.

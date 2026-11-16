@@ -66,7 +66,7 @@ class Harness
      if(row>0)Check(Math.Abs(p.SafeStart(row)-p.SafeStart(row-1))<=1,"Connected safe refuge route");
      int safe=0,threat=0;
      for(int col=0;col<4;col++) {if(p.Protected(row,col)){safe++;Check(!p.Raised(row*4+col),"Protected cells never rise");}if(p.Raised(row*4+col))threat++;}
-     Check(safe==2&&threat>=1,"Two adjacent refuges and visible hazard in every row");
+     Check(safe==1&&threat>=2&&threat<=3,"One protected lane and two or three spears per row");
     }
     Check(p.SafeStart(0)==p.SafeStart(1),"Straight tutorial rows");
    }

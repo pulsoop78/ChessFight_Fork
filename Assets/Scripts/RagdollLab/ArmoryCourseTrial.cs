@@ -134,6 +134,22 @@ namespace ChessFight.RagdollLab
             players[selected].SetInput(new PawnInput {move=desired,aim=cameraRig.AimForward,jump=GameSettings.Pressed(GameKey.Jump),sprint=GameSettings.Held(GameKey.Sprint),
                 shove=Input.GetMouseButtonDown(0),shoveHeld=Input.GetMouseButton(0),grab=Input.GetMouseButton(1)});
         }
+        void FixedUpdate()
+        {
+            if(players==null || context==null || !context.Running)return;
+            foreach(var pawn in players)
+            {
+                if(!pawn.gameObject.activeInHierarchy)continue;
+                Vector3 direction=Vector3.ProjectOnPlane(pawn.Aim,Vector3.up);
+                if(direction.sqrMagnitude<.01f)direction=pawn.Facing;
+                for(int hand=0;hand<2;hand++)
+                {
+                    var held=hand==0?pawn.handL.HeldCollider:pawn.handR.HeldCollider;
+                    if(held!=null && held.attachedRigidbody!=null && held.GetComponentInParent<ArmoryCarryShield>()!=null)
+                        held.attachedRigidbody.MoveRotation(Quaternion.LookRotation(direction.normalized,Vector3.up));
+                }
+            }
+        }
         void SetCursor(){Cursor.lockState=paused?CursorLockMode.None:CursorLockMode.Locked;Cursor.visible=paused;}
         void OnApplicationFocus(bool focus){if(initialized&&!focus){paused=true;context.Running=false;SetCursor();}}
         void OnGUI()

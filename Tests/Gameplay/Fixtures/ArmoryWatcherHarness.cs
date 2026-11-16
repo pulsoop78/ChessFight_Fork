@@ -67,12 +67,12 @@ class Harness{
   Physics.rayFound=new Collider[32];context.Seed++;Tick(gallery,context,.8);Check(actor.Hits==2,"Saturated cover query fails safe");
   Physics.rayFound=new Collider[0];Tick(gallery,context,2.1);Check(actor.Hits==2,"Look-away is safe");
   var fans=(Transform[])typeof(ArmoryWatcherGallery).GetField("sightFans",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(gallery);Check(!fans[0].gameObject.active,"Look-away hides sight fan");
-  context.Running=false;Tick(gallery,context,4.9);Check(actor.Hits==2,"Paused trial cannot detect");context.Running=true;
-  ChessFight.Gameplay.ObstacleClock.Shared=true;Tick(gallery,context,4.9);Check(actor.Hits==2,"Offline fixture does not run under a shared match clock");ChessFight.Gameplay.ObstacleClock.Shared=false;
-  Tick(gallery,context,4.9);Check(actor.Hits==3,"Watching next cycle can hit after cooldown");
+  context.Running=false;Tick(gallery,context,7.7);Check(actor.Hits==2,"Paused trial cannot detect");context.Running=true;
+  ChessFight.Gameplay.ObstacleClock.Shared=true;Tick(gallery,context,7.7);Check(actor.Hits==2,"Offline fixture does not run under a shared match clock");ChessFight.Gameplay.ObstacleClock.Shared=false;
+  Tick(gallery,context,7.7);Check(actor.Hits==3,"Watching next cycle can hit after cooldown");
   context.Seed++;Tick(gallery,context,.1);Check(actor.Hits==4,"Seed reset clears old cooldown");
   // Same-seed rewind must also clear the old cooldown, not leave an invisible immunity window.
-  Tick(gallery,context,4.9);int before=actor.Hits;Tick(gallery,context,.1);Check(actor.Hits==before+1,"Same-seed rewind clears cooldown");
+  Tick(gallery,context,7.7);int before=actor.Hits;Tick(gallery,context,.1);Check(actor.Hits==before+1,"Same-seed rewind clears cooldown");
   motion.moving=false;Tick(gallery,context,.2);Check(actor.Hits==before+1,"Knockdown adapter/passive motion remains excluded");
   actor.gameObject.component=null;Tick(gallery,context,.3);Check(actor.Hits==before+1,"Missing intent adapter cannot be detected");
   actor.gameObject.component=motion;motion.moving=true;

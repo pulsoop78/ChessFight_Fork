@@ -14,7 +14,9 @@ namespace ChessFight.ProtectKing
         [SerializeField] Transform[] sightFans;
         [SerializeField, Min(.5f)] float lookSeconds=2;
         [SerializeField, Min(.5f)] float lookAwaySeconds=2.8f;
-        [SerializeField, Min(1)] float range=14;
+        [SerializeField, Min(.1f)] float turnSeconds=.8f;
+        [SerializeField, Min(.1f)] float warningSeconds=1.2f;
+        [SerializeField, Min(1)] float range=18;
         [SerializeField, Range(10,160)] float viewAngle=80;
         [SerializeField, Min(0)] float hitSpeed=5;
         [SerializeField, Min(0)] float stun=1;
@@ -59,15 +61,18 @@ namespace ChessFight.ProtectKing
             if(context==null || !context.Running || ObstacleClock.Shared || facing==null)return;
             double now=context.Now;
             if(seed!=context.Seed || now<lastTime){seed=context.Seed;hitAt.Clear();}
-            lastTime=now;float cycle=Mathf.Max(.5f,lookSeconds)+Mathf.Max(.5f,lookAwaySeconds);
+            lastTime=now;float turn=Mathf.Max(.1f,turnSeconds),warn=Mathf.Max(.1f,warningSeconds);
+            float cycle=Mathf.Max(.5f,lookSeconds)+Mathf.Max(.5f,lookAwaySeconds)+turn*2+warn;
             for(int w=0;w<watchers.Length;w++)
             {
                 var eye=watchers[w];if(eye==null)continue;
                 float phase=(float)((now+w*cycle*.5)%cycle);bool watching=phase<lookSeconds;
-                eye.localRotation=facing[w]*Quaternion.Euler(0,watching?0:120,0);
-                if(sightFans!=null && w<sightFans.Length && sightFans[w]!=null)sightFans[w].gameObject.SetActive(watching);
+                float angle=phase<lookSeconds?0:phase<lookSeconds+turn?180*(phase-lookSeconds)/turn:phase<lookSeconds+turn+lookAwaySeconds?180:phase<lookSeconds+turn*2+lookAwaySeconds?180*(1-(phase-lookSeconds-turn-lookAwaySeconds)/turn):0;
+                eye.localRotation=facing[w]*Quaternion.Euler(0,angle,0);
+                bool warning=phase>=cycle-warn;
+                if(sightFans!=null && w<sightFans.Length && sightFans[w]!=null)sightFans[w].gameObject.SetActive(watching || (warning && (int)(phase*6)%2==0));
                 if(eyes!=null && w<eyes.Length && eyes[w]!=null)
-                {tint.Clear();LitMaterials.SetColor(tint,watching?Color.white:Color.gray);eyes[w].SetPropertyBlock(tint);}
+                {tint.Clear();LitMaterials.SetColor(tint,watching||warning?Color.white:Color.gray);eyes[w].SetPropertyBlock(tint);}
                 if(!watching)continue;
                 var s=zone.transform.lossyScale;unique.Clear();
                 int n=Physics.OverlapBoxNonAlloc(zone.transform.TransformPoint(zone.center),Vector3.Scale(zone.size*.5f,new Vector3(Mathf.Abs(s.x),Mathf.Abs(s.y),Mathf.Abs(s.z))),overlaps,zone.transform.rotation,~0,QueryTriggerInteraction.Ignore);

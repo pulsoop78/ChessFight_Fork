@@ -154,7 +154,7 @@ class Builder:
             else:
                 visual=self.box(group,'Strike warning',(0,.045,0),(12,.025,3),'ArmoryTrialDarkGray',False)
                 warning_parts.append(self.renderer(visual))
-            self.d.script(group,'ArmoryDullahan',kit.fields(context=kit.ref(self.context),weaponPivot=kit.ref(pivot['tr']),strikeArea=kit.ref(area),warningVisual=kit.ref(self.renderer(visual)),axe=1 if axe else 0,phaseOffset=3 if axe else 0,windupSeconds=1.5,strikeSeconds=.3,holdSeconds=.8,recoverySeconds=1.4,restSeconds=2,pushSpeed=6,upwardSpeed=3,stunSeconds=.8,attackReach=18)+refs('warningParts',warning_parts))
+            self.d.script(group,'ArmoryDullahan',kit.fields(context=kit.ref(self.context),weaponPivot=kit.ref(pivot['tr']),strikeArea=kit.ref(area),warningVisual=kit.ref(self.renderer(visual)),axe=1 if axe else 0,phaseOffset=1.75 if axe else 0,windupSeconds=1.1,strikeSeconds=.25,holdSeconds=.55,recoverySeconds=.8,restSeconds=.8,pushSpeed=6,upwardSpeed=3,stunSeconds=.8,attackReach=18)+refs('warningParts',warning_parts))
     def crossbows(self):
         group=self.group('03 Carry shield crossbow gallery',self.hazards,(58,6,108))
         zone=self.d.box(group,(12,5,20),(0,2.5,10),True)
@@ -167,20 +167,22 @@ class Builder:
             self.box(shield,'Shield grip',(0,0,-.25),(.4,1,.3),'ArmoryTrialDarkGray',False)
             self.d.script(shield,'ArmoryCarryShield',kit.fields(context=kit.ref(self.context),body=kit.ref(rb),spawnPoint=kit.ref(spawn['tr']),allowedArea=kit.ref(allowed),recoverySeconds=3,abandonedSeconds=12,lostBelowSpawn=8))
         emitters=[];projectiles=[]
-        for i,x in enumerate((-4,0,4)):
-            emitter=self.group('Crossbow emitter '+str(i),group,(x,1.5,21),kit.yaw(180));emitters.append(emitter['tr'])
+        aim_lines=[]
+        for i,(side,z) in enumerate(((-1,4),(-1,10),(-1,16),(1,4),(1,10),(1,16))):
+            emitter=self.group('Crossbow emitter '+str(i),group,(side*8,1.5,z),kit.yaw(90 if side<0 else -90));emitters.append(emitter['tr'])
             self.box(emitter,'Crossbow bow',(0,0,0),(2,.3,.3),'ArmoryTrialDarkGray',False)
             self.box(emitter,'Crossbow stock',(0,0,.5),(.35,.35,1.4),'ArmoryTrialLightGray',False)
-        for i in range(9):
+            aim_lines.append(self.box(group,'Aim warning line '+str(i),(0,-50,0),(.06,.06,1),'ArmoryTrialLightGray',False)['tr'])
+        for i in range(18):
             visual=self.box(group,'Pooled arrow '+str(i),(0,-50,0),(.1,.1,1),'ArmoryTrialDarkGray',False)
             projectiles.append(visual['tr'])
         for x,z in ((-6,8),(6,14)):
             cover=self.box(group,'Fixed turning cover '+str(x),(x,1,z),(1,2,3),'ArmoryTrialDarkGray',True,unclimb=True)
-        self.d.script(group,'ArmoryCrossbowGallery',kit.fields(context=kit.ref(self.context),zone=kit.ref(zone),volleySeconds=2.8,telegraphSeconds=1,arrowSpeed=18,hitSpeed=5,stun=.6,hitCooldown=1)+refs('emitters',emitters)+refs('projectileVisuals',projectiles))
+        self.d.script(group,'ArmoryCrossbowGallery',kit.fields(context=kit.ref(self.context),zone=kit.ref(zone),volleySeconds=2.8,telegraphSeconds=1,arrowSpeed=18,hitSpeed=5,stun=.6,hitCooldown=1)+refs('emitters',emitters)+refs('projectileVisuals',projectiles)+refs('aimLines',aim_lines))
     def watchers(self):
         group=self.group('04 Watching armour gallery',self.hazards,(102,6,138))
         zone=self.d.box(group,(12,4,12),(0,2,6),True);watchers=[];eyes=[];fans=[]
-        for i,(x,z,yaw) in enumerate(((-8,7,90),(8,10,-90))):
+        for i,(x,z,yaw) in enumerate(((-10,2,90),(10,11,-90))):
             watcher=self.group('Watcher gaze pivot '+str(i),group,(x,0,z),kit.yaw(yaw));watchers.append(watcher['tr'])
             self.armour(watcher,'Watching armour', (0,0,0))
             self.box(watcher,'Watcher helmet',(0,4.8,0),(1.7,1.7,1.5),'ArmoryTrialLightGray',True,unclimb=True)
@@ -189,12 +191,12 @@ class Builder:
             # Narrow slices approximate the horizontal cone, clipped to the gallery and its range.
             for segment in range(12):
                 centre_x=-5.5+segment;distance=abs(centre_x-x)+.5
-                half_z=min(distance*math.tan(math.radians(40)),math.sqrt(max(0,14*14-distance*distance)))
+                half_z=min(distance*math.tan(math.radians(40)),math.sqrt(max(0,18*18-distance*distance)))
                 lo=max(0,z-half_z);hi=min(12,z+half_z)
                 if hi>lo:self.box(fan,'Sight cone slice '+str(segment),(centre_x,.035,(lo+hi)/2),(.99,.025,hi-lo),'ArmoryTrialLightGray',False)
         for x,z in ((-5,2),(4,8)):
             self.box(group,'Sight blocking display '+str(x),(x,1.75,z),(2,3.5,2),'ArmoryTrialDarkGray',True,unclimb=True)
-        self.d.script(group,'ArmoryWatcherGallery',kit.fields(context=kit.ref(self.context),zone=kit.ref(zone),lookSeconds=2,lookAwaySeconds=2.8,range=14,viewAngle=80,hitSpeed=5,stun=1,hitCooldown=2)+refs('watchers',watchers)+refs('eyes',eyes)+refs('sightFans',fans))
+        self.d.script(group,'ArmoryWatcherGallery',kit.fields(context=kit.ref(self.context),zone=kit.ref(zone),lookSeconds=2,lookAwaySeconds=3.8,turnSeconds=.8,warningSeconds=1.2,range=18,viewAngle=80,hitSpeed=5,stun=1,hitCooldown=2)+refs('watchers',watchers)+refs('eyes',eyes)+refs('sightFans',fans))
     def save(self):
         self.floors();self.architecture();self.spear_floor();self.dullahans();self.crossbows();self.watchers()
         course=self.d.script(self.root,'CourseModule',kit.fields(courseId='"2-3-TRIAL"',displayName='"아랫궁 무구실 · 회색 플레이 검증"',entry=kit.ref(self.entry['tr']),exit=kit.ref(self.exit['tr']),minigameSlot='{fileID: 0}',targetSeconds=269,laneWidth=12)+refs('checkpoints',[x['tr'] for x in self.checkpoints])+refs('route',[x['tr'] for x in self.routes])+'  placementBounds:\n    m_Center: {x: 80, y: 0, z: 90}\n    m_Extent: {x: 81, y: 30, z: 93}\n')

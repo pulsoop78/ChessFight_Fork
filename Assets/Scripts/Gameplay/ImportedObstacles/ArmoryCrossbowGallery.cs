@@ -11,6 +11,10 @@ namespace ChessFight.ProtectKing
         [SerializeField] ArmoryCourseContext context;
         [SerializeField] BoxCollider zone;
         [SerializeField] Transform[] emitters;
+        [SerializeField] Transform[] aimLines;
+        Vector3[] aimedDirections;
+        long aimedVolley=long.MinValue;
+        readonly Collider[] targets=new Collider[256];
         [SerializeField] Transform[] projectileVisuals;
         [SerializeField, Min(.5f)] float volleySeconds = 2.8f;
         [SerializeField, Min(.1f)] float telegraphSeconds = 1;
@@ -40,6 +44,7 @@ namespace ChessFight.ProtectKing
             { Debug.LogError("Armory projectile pool contains an unassigned visual.", this); enabled = false; return; }
             int n = projectileVisuals.Length;
             positions = new Vector3[n]; directions = new Vector3[n]; remaining = new float[n]; live = new bool[n];
+            aimedDirections=new Vector3[emitters.Length];
             bows = new Renderer[emitters.Length][];
             for (int i = 0; i < emitters.Length; i++) bows[i] = emitters[i] != null ? emitters[i].GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>();
             tint = new MaterialPropertyBlock(); ResetGallery();
@@ -48,6 +53,8 @@ namespace ChessFight.ProtectKing
         {
             if (live == null) return;
             Array.Clear(live, 0, live.Length); foreach (var visual in projectileVisuals) visual.gameObject.SetActive(false);
+            aimedVolley=long.MinValue;
+            if(aimLines!=null)foreach(var line in aimLines)if(line!=null)line.gameObject.SetActive(false);
             lastHit.Clear(); lastVolley = long.MinValue; lastTime = Now; seed = context != null ? context.Seed : 0; next = 0;
             BlockedShots = PawnHits = 0;
         }
@@ -72,12 +79,35 @@ namespace ChessFight.ProtectKing
             near = Mathf.Max(near, lo); far = Mathf.Min(far, hi);
             return near <= far;
         }
+        void Aim(long volley)
+        {
+            aimedVolley=volley;var bounds=zone.bounds;
+            int n=Physics.OverlapBoxNonAlloc(bounds.center,bounds.extents,targets,Quaternion.identity,~0,QueryTriggerInteraction.Ignore);
+            for(int e=0;e<emitters.Length;e++)
+            {
+                var source=emitters[e];if(source==null)continue;
+                float nearest=float.PositiveInfinity;Vector3 target=source.position+source.forward*30;
+                for(int i=0;i<n;i++)
+                {
+                    var actor=ImportedObstacleActor.Find(targets[i]);if(actor==null||!actor.CanReceiveObstacle)continue;
+                    Vector3 p=zone.transform.InverseTransformPoint(actor.Position)-zone.center,h=zone.size*.5f;
+                    if(Mathf.Abs(p.x)>h.x||Mathf.Abs(p.y)>h.y||Mathf.Abs(p.z)>h.z)continue;
+                    float distance=(actor.Position-source.position).sqrMagnitude;
+                    if(distance<nearest){nearest=distance;target=actor.Position+Vector3.up*1.1f;}
+                }
+                var direction=(target-source.position).normalized;aimedDirections[e]=direction;
+                if(aimLines!=null&&e<aimLines.Length&&aimLines[e]!=null&&ClipSegment(zone,source.position,source.position+direction*100,out var a,out var b))
+                {var line=aimLines[e];line.position=(a+b)*.5f;line.rotation=Quaternion.LookRotation(direction);line.localScale=new Vector3(.06f,.06f,Vector3.Distance(a,b));}
+            }
+        }
         void FireVolley()
         {
-            foreach (var source in emitters)
+            for(int e=0;e<emitters.Length;e++)
             {
+                var source=emitters[e];
+                if(emitters.Length==6 && e/3!=(int)(aimedVolley%2))continue;
                 if (source == null) continue;
-                Vector3 direction = source.forward.normalized;
+                Vector3 direction = aimedDirections[e].sqrMagnitude>.01f?aimedDirections[e]:source.forward.normalized;
                 if (!ClipSegment(zone, source.position, source.position + direction * 200, out var entry, out var exit)) continue;
                 int slot = next++ % live.Length;
                 positions[slot] = entry + direction * .01f; directions[slot] = direction;
@@ -131,6 +161,8 @@ namespace ChessFight.ProtectKing
             float warning = Mathf.Max(.1f, telegraphSeconds), period = Mathf.Max(warning + .5f, volleySeconds);
             long volley = (long)Math.Floor(now / period); float age = (float)(now - volley * period);
             Warning = age < warning;
+            if(aimedVolley!=volley)Aim(volley);
+            if(aimLines!=null)for(int e=0;e<aimLines.Length;e++)if(aimLines[e]!=null)aimLines[e].gameObject.SetActive(Warning && (emitters.Length!=6 || e/3==(int)(volley%2)));
             if (age >= warning && lastVolley != volley) { lastVolley = volley; FireVolley(); }
             for (int i = 0; i < live.Length; i++)
             {
@@ -138,10 +170,11 @@ namespace ChessFight.ProtectKing
                 projectileVisuals[i].position = positions[i]; projectileVisuals[i].gameObject.SetActive(live[i]);
             }
             tint.Clear(); ChessFight.Game.LitMaterials.SetColor(tint, Warning ? Color.white * (.7f + .3f * Mathf.Sin(age * 20)) : Color.gray);
-            foreach (var renderers in bows) foreach (var bow in renderers) if (bow != null) bow.SetPropertyBlock(tint);
+            for(int e=0;e<bows.Length;e++)foreach(var bow in bows[e])if(bow!=null)bow.SetPropertyBlock(emitters.Length!=6 || e/3==(int)(volley%2)?tint:null);
         }
         void OnDisable()
         {
+            if(aimLines!=null)foreach(var line in aimLines)if(line!=null)line.gameObject.SetActive(false);
             if (projectileVisuals != null) foreach (var visual in projectileVisuals) if (visual != null) visual.gameObject.SetActive(false);
             if (bows != null) foreach (var renderers in bows) foreach (var bow in renderers) if (bow != null) bow.SetPropertyBlock(null);
         }

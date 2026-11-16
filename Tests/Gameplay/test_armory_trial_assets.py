@@ -46,8 +46,8 @@ class ArmoryTrialAssets(unittest.TestCase):
         self.assertEqual(len(self.scripts('ArmoryCrossbowGallery')),1)
         self.assertEqual(len(self.scripts('ArmoryWatcherGallery')),1)
         _,_,raw=self.scripts('ArmoryCrossbowGallery')[0]
-        self.assertEqual(len(self.refs(raw,'emitters')),3)
-        self.assertEqual(len(self.refs(raw,'projectileVisuals')),9)
+        self.assertEqual(len(self.refs(raw,'emitters')),6)
+        self.assertEqual(len(self.refs(raw,'projectileVisuals')),18)
         for k,f,b in self.scripts('ArmoryCarryShield'):
             self.assertNotEqual(number(f['body']),0);self.assertNotEqual(number(f['spawnPoint']),0)
             self.assertNotEqual(number(f['context']),0);self.assertNotEqual(number(f['allowedArea']),0)
