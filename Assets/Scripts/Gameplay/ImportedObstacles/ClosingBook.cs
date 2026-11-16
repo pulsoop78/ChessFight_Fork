@@ -8,6 +8,9 @@ namespace ChessFight.ProtectKing
     public sealed class ClosingBook : Obstacle
     {
         [SerializeField] Transform cover;
+        [SerializeField] BoxCollider closedDeck;
+        [SerializeField, Min(0)] float openingUpSpeed = 8;
+        [SerializeField, Min(0)] float openingForwardSpeed = 3;
         [SerializeField] Transform recoveryPoint;
         [SerializeField] BoxCollider crushVolume;
         [SerializeField] Renderer warningStrip;
@@ -24,7 +27,7 @@ namespace ChessFight.ProtectKing
         readonly HashSet<ImportedObstacleActor> seen = new HashSet<ImportedObstacleActor>();
         MaterialPropertyBlock tint;
         float clock;
-        public void ResetCycle() { clock = phaseSeconds; Apply(); }
+        public void ResetCycle() { clock = phaseSeconds; float fold = Apply(); if(closedDeck!=null) closedDeck.enabled=fold>=.999f; }
         void Awake() { tint = new MaterialPropertyBlock(); ResetCycle(); }
         // Only the closing strike can crush; a closed book is not a persistent kill volume.
         public static float Fold(float t, float open, float warning, float closing, float shut, float opening)
@@ -52,6 +55,20 @@ namespace ChessFight.ProtectKing
             }
             return fold;
         }
+        void ThrowRiders()
+        {
+            seen.Clear();
+            var bounds=closedDeck.bounds;
+            int n=Physics.OverlapBoxNonAlloc(bounds.center+Vector3.up,bounds.extents+Vector3.up,
+                overlaps,Quaternion.identity,~0,QueryTriggerInteraction.Ignore);
+            for(int i=0;i<n;i++)
+            {
+                var actor=ImportedObstacleActor.Find(overlaps[i]);
+                if(actor==null || !actor.CanReceiveObstacle || !seen.Add(actor) ||
+                    !actor.TryGetGroundCollider(out var support) || support!=closedDeck) continue;
+                actor.LaunchFromObstacle(Vector3.up*Mathf.Max(0,openingUpSpeed)+transform.TransformDirection(new Vector3(0,0,Mathf.Max(0,openingForwardSpeed))));
+            }
+        }
         void FixedUpdate()
         {
             if (ObstacleClock.Shared || !Simulating) return;
@@ -59,6 +76,10 @@ namespace ChessFight.ProtectKing
                 Mathf.Max(.1f,closeSeconds), Mathf.Max(.2f,closedSeconds), Mathf.Max(.1f,reopenSeconds));
             clock += Time.fixedDeltaTime;
             float current = Apply();
+            bool opening = previous >= .999f && current < .999f;
+            if(opening && closedDeck!=null) ThrowRiders();
+            // A stationary full book volume closes the gap below the visible cover.
+            if(closedDeck!=null) closedDeck.enabled=current>=.999f;
             if (previous >= .9f || current < .9f || current <= previous || crushVolume == null || recoveryPoint == null) return;
             seen.Clear();
             var s = crushVolume.transform.lossyScale;

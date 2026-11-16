@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using ChessFight.Game;
+using ChessFight.Network;
 using UnityEngine;
 
 namespace ChessFight.RagdollLab
@@ -16,6 +17,7 @@ namespace ChessFight.RagdollLab
         [SerializeField, Min(1)] float moveSeconds = 3;
         [SerializeField, Min(1)] float warningSeconds = 5;
         [SerializeField, Min(.5f)] float restSeconds = 2;
+        [SerializeField, Min(.25f), Tooltip("Minimum real-time warning before a piece starts moving.")] float previewSeconds = 1.5f;
         [SerializeField, Min(1)] float knockbackSpeed = 24;
         [SerializeField, Min(0)] float upwardSpeed = 9;
         [SerializeField] bool botsEnabled = true;
@@ -36,11 +38,18 @@ namespace ChessFight.RagdollLab
         string[][] score;
         GiantChessGames library;
         public GiantChessGame CurrentGame { get; private set; }
-        int selected, ply, phase, from, to, rookFrom, rookTo;
+        int selected, ply, phase;
         float elapsed;
         ulong attack;
         bool running, menu = true, initialized;
-        GameObject moving;
+        sealed class AnimatedStep
+        {
+            public ChessReplayStep rule;
+            public GameObject piece, rook;
+        }
+        readonly List<AnimatedStep> batch = new List<AnimatedStep>();
+        readonly Transform[] moveArrows = new Transform[2];
+        bool previewReady;
         Vector3 savedGravity;
         CursorLockMode savedLock;
         bool savedCursor;
@@ -54,7 +63,7 @@ namespace ChessFight.RagdollLab
             int rank = Mathf.FloorToInt(p.x / tileSize + 4), row = Mathf.FloorToInt(p.z / tileSize);
             return rank >= 0 && rank < 8 && row >= 0 && row < 8 ? rank * 8 + 7 - row : -1;
         }
-        bool Occupied(int s) => pieces[s] && !(phase == 1 && pieces[s] == moving);
+        bool Occupied(int s) => pieces[s];
         void RefreshOccupiedMarks()
         {
             for (int s = 0; s < 64; s++) occupiedMarks[s].SetActive(false);
@@ -154,7 +163,8 @@ namespace ChessFight.RagdollLab
             for (int s = 0; s < 64; s++) { if (pieces[s]) Destroy(pieces[s]); pieces[s] = null; warnings[s].SetActive(false); }
             string setup = "RNBQKBNRPPPPPPPP................................pppppppprnbqkbnr";
             for (int s = 0; s < 64; s++) if (setup[s] != '.') pieces[s] = BuildPiece(setup[s], s);
-            ply = phase = 0; elapsed = 0; attack = 0; moving = null; running = false;
+            foreach(var arrow in moveArrows) if(arrow!=null) arrow.gameObject.SetActive(false); batch.Clear();previewReady=false;
+            ply = phase = 0; elapsed = 0; attack = 0; running = false;
             RefreshOccupiedMarks();
         }
         GameObject BuildPiece(char code, int square)
@@ -242,31 +252,64 @@ namespace ChessFight.RagdollLab
         void Select(int i) { selected = i % players.Count; cameraRig.soloTarget = players[selected]; cameraRig.distance = 12; cameraRig.maxDistance = 45; }
         void CursorState() { Cursor.visible = menu; Cursor.lockState = menu ? CursorLockMode.None : CursorLockMode.Locked; }
         void OnApplicationFocus(bool focus) { if (initialized && !focus) { menu = true; CursorState(); } }
+        void PreviewMove()
+        {
+            batch.Clear();attack=0;
+            for(int i=0;i<2 && ply+i<score.Length;i++)
+            {
+                var rule=new ChessReplayStep(score[ply+i]);
+                batch.Add(new AnimatedStep {rule=rule,piece=pieces[rule.From],rook=rule.RookFrom>=0?pieces[rule.RookFrom]:null});
+                attack|=rule.Attack | (1UL<<rule.To);
+                if(rule.RookTo>=0) attack|=1UL<<rule.RookTo;
+                if(moveArrows[i]==null)
+                {
+                    var arrow=new GameObject("Next moving piece arrow "+i).transform;arrow.SetParent(transform,false);moveArrows[i]=arrow;
+                    foreach(var entry in new[]{new Vector3(0,3,0),new Vector3(-1,1,0),new Vector3(1,1,0)})
+                    {
+                        var part=Shape("Arrow segment",Vector3.zero,new Vector3(.8f,3,.8f),gold,solid:false);
+                        part.transform.SetParent(arrow,false);part.transform.localPosition=entry;
+                        part.transform.localRotation=Quaternion.Euler(0,0,entry.x<0?45:entry.x>0?-45:0);
+                    }
+                }
+                moveArrows[i].gameObject.SetActive(true);
+            }
+            for(int s=0;s<64;s++) warnings[s].SetActive((attack&(1UL<<s))!=0);
+            previewReady=true;UpdateMoveArrow();
+        }
+        void UpdateMoveArrow()
+        {
+            for(int i=0;i<batch.Count;i++)
+            {
+                var piece=batch[i].piece;if(piece==null) continue;
+                float top=piece.transform.position.y+15;
+                foreach(var renderer in piece.GetComponentsInChildren<Renderer>()) top=Mathf.Max(top,renderer.bounds.max.y);
+                moveArrows[i].position=new Vector3(piece.transform.position.x,top+3,piece.transform.position.z);
+            }
+        }
         void BeginMove()
         {
-            if (ply >= score.Length) { running = false; return; }
-            var row = score[ply]; from = int.Parse(row[0]); to = int.Parse(row[1]); rookFrom = int.Parse(row[2]); rookTo = int.Parse(row[3]);
-            moving = pieces[from]; moving.GetComponent<Collider>().enabled = false;
-            phase = 1; elapsed = 0; warnings[to].SetActive(true);
-            if (rookTo >= 0) warnings[rookTo].SetActive(true);
-            RefreshOccupiedMarks();
+            if(batch.Count==0) {running=false;return;}
+            phase=1;elapsed=0;
         }
         void Land()
         {
-            if (pieces[to]) { pieces[to].GetComponent<Collider>().enabled = false; Destroy(pieces[to]); }
-            int captured=int.Parse(score[ply][6]);
-            if(captured>=0 && captured!=to && pieces[captured]) { pieces[captured].GetComponent<Collider>().enabled=false; Destroy(pieces[captured]);pieces[captured]=null; }
-            pieces[to] = moving; pieces[from] = null; moving.transform.position = Square(to); moving.GetComponent<Collider>().enabled = false;
-            if(score[ply][7]!=".") { moving.GetComponent<Collider>().enabled=false;Destroy(moving); moving=BuildPiece(score[ply][7][0],to);pieces[to]=moving; }
-            if (rookFrom >= 0) { pieces[rookTo] = pieces[rookFrom]; pieces[rookFrom] = null; pieces[rookTo].transform.position = Square(rookTo); }
-            // Landing still hits a pawn, but occupied squares never block or teleport walkers.
-            for (int i = 0; i < players.Count; i++)
-                if (bookRecovery[i] <= 0 && (OnSquare(players[i], to) || (rookTo >= 0 && OnSquare(players[i], rookTo))))
-                    players[i].TakeHit(-transform.forward * knockbackSpeed + Vector3.up * upwardSpeed, 1, 0, true);
-            RefreshOccupiedMarks();
-            attack = ulong.Parse(score[ply][4], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-            for (int s = 0; s < 64; s++) warnings[s].SetActive((attack & (1UL << s)) != 0);
-            phase = 2; elapsed = 0;
+            // The two trajectories land together; resolve the saved legal moves in their original order.
+            foreach(var step in batch)
+            {
+                var rule=step.rule;
+                step.piece.transform.position=Square(rule.To);
+                if(step.rook!=null) step.rook.transform.position=Square(rule.RookTo);
+                rule.Apply(pieces,BuildPiece,p=>{if(p!=null)Destroy(p);});
+            }
+            for(int i=0;i<players.Count;i++)
+            {
+                if(bookRecovery[i]>0) continue;
+                foreach(var step in batch)
+                    if(OnSquare(players[i],step.rule.To) || (step.rule.RookTo>=0 && OnSquare(players[i],step.rule.RookTo)))
+                    {players[i].TakeHit(-transform.forward*knockbackSpeed+Vector3.up*upwardSpeed,1,0,true);break;}
+            }
+            foreach(var arrow in moveArrows) if(arrow!=null) arrow.gameObject.SetActive(false);
+            phase=2;elapsed=0;
         }
         bool OnSquare(RagdollPawn pawn, int s)
         {
@@ -276,7 +319,7 @@ namespace ChessFight.RagdollLab
         bool Dangerous(Vector3 p)
         {
             int s = BoardSquare(p);
-            return s >= 0 && ((phase == 1 && (s == to || s == rookTo)) || (attack & (1UL << s)) != 0);
+            return s >= 0 && ((attack & (1UL << s)) != 0);
         }
         void Update()
         {
@@ -301,12 +344,19 @@ namespace ChessFight.RagdollLab
             if (approach != null) approach.AdvanceTimer(!menu && Application.isFocused ? Time.deltaTime : 0);
             if (active && (approach == null || !approach.Available || approach.ChessStarted))
             {
-                elapsed += Time.deltaTime * Mathf.Clamp(replaySpeed, .25f, 16f);
-                if (phase == 0 && elapsed >= restSeconds) BeginMove();
+                if(phase==0 && !previewReady) PreviewMove();
+                UpdateMoveArrow();
+                elapsed += Time.deltaTime * (phase==0 ? 1 : Mathf.Clamp(replaySpeed, .25f, 16f));
+                if (phase == 0 && elapsed >= Mathf.Max(previewSeconds,restSeconds/Mathf.Clamp(replaySpeed,.25f,16f))) BeginMove();
                 else if (phase == 1)
                 {
                     float t = Mathf.Clamp01(elapsed / moveSeconds);
-                    moving.transform.position = Vector3.Lerp(Square(from), Square(to), t) + Vector3.up * (Mathf.Sin(t * Mathf.PI) * 22);
+                    foreach(var step in batch)
+                    {
+                        step.piece.transform.position=Vector3.Lerp(Square(step.rule.From),Square(step.rule.To),t)+Vector3.up*(Mathf.Sin(t*Mathf.PI)*22);
+                        if(step.rook!=null) step.rook.transform.position=Vector3.Lerp(Square(step.rule.RookFrom),Square(step.rule.RookTo),t)+Vector3.up*(Mathf.Sin(t*Mathf.PI)*12);
+                    }
+                    UpdateMoveArrow();
                     if (t >= 1) Land();
                 }
                 else if (phase == 2 && elapsed >= warningSeconds)
@@ -316,14 +366,16 @@ namespace ChessFight.RagdollLab
                 }
                 else if (phase == 3 && elapsed >= .5f)
                 {
-                    foreach (var w in warnings) w.SetActive(false); attack = 0; ply++; phase = 0; elapsed = 0;
+                    foreach (var w in warnings) w.SetActive(false); attack = 0; ply+=batch.Count; batch.Clear();phase = 0; elapsed = 0; previewReady=false;
                     if (ply == score.Length) running = false;
                 }
             }
             red.SetColor("_EmissionColor", Color.red * (phase == 3 ? 4 : .4f + Mathf.PingPong(Time.time * 2, 1)));
             for (int side = 0; side < 2; side++)
             {
-                Vector3 target = phase == 1 && ply % 2 == side && moving ? moving.transform.position + Vector3.up * 19 : shoulders[side] + Vector3.up * 3;
+                Vector3 target=shoulders[side]+Vector3.up*3;
+                for(int i=0;i<batch.Count;i++) if(phase==1 && (ply+i)%2==side && batch[i].piece!=null)
+                    target=batch[i].piece.transform.position+Vector3.up*19;
                 hands[side].position = target; arms[side].position = (shoulders[side] + target) * .5f;
                 arms[side].rotation = Quaternion.LookRotation(target - shoulders[side]); arms[side].localScale = new Vector3(5, 5, Vector3.Distance(target, shoulders[side]));
             }
@@ -386,7 +438,7 @@ namespace ChessFight.RagdollLab
             int a = 0, b = 0; for (int i = 0; i < 12; i++) if (finished[i]) { if (i < 6) a++; else b++; }
             bool inOffices = approach != null && approach.Available && !approach.Entered(selected);
             GUI.Box(new Rect(12, 12, 720, inOffices ? 250 : 195), "");
-            string move = ply < score.Length ? $"{ply / 2 + 1}. {(ply % 2 == 0 ? "백" : "흑")} {score[ply][5]}" : "기보 종료 · " + CurrentGame.result;
+            string move = ply < score.Length ? $"{ply / 2 + 1}. 백 {score[ply][5]} / 흑 {(ply+1<score.Length?score[ply+1][5]:"—")}" : "기보 종료 · " + CurrentGame.result;
             int officeSeconds = approach != null ? Mathf.FloorToInt(approach.Elapsed(selected)) : 0;
             string stage = approach != null && approach.Available && !approach.Entered(selected)
                 ? $"왕의 서재 · 체크포인트 {approach.Checkpoint(selected)}/{approach.CheckpointCount} · {officeSeconds / 60}:{officeSeconds % 60:00} / 전체 목표 2~3분"

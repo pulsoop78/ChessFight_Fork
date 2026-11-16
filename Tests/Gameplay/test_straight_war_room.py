@@ -70,3 +70,16 @@ class StraightWarRoom(unittest.TestCase):
         self.assertAlmostEqual(transform(t.data,number(f['threshold']))[2],-136.4)
         self.assertEqual(float(f['revealSeconds']),1.6)
         self.assertNotEqual(number(f['veil']),0)
+
+    def test_closed_books_have_support_decks_and_first_clue_clears_portal(self):
+        t=self.t
+        for _,f,_ in t.scripts_of('ClosingBook'):
+            deck=fields(t.data[str(number(f['closedDeck']))])
+            self.assertEqual(vector(deck['m_Size']),(18,.5,16.4))
+            self.assertEqual(vector(deck['m_Center']),(0,.25,8))
+            self.assertEqual(deck['m_IsTrigger'],'0')
+            self.assertEqual(float(f['openingUpSpeed']),8)
+        go=next(go for go,n in t.names.items() if n=='Memory clue 1')
+        p=transform(t.data,t.owners[go])
+        self.assertEqual(p,(-8,3.8,-132))
+        self.assertGreater(p[2],-136.4)

@@ -434,6 +434,7 @@ class Builder(LegacyBuilder):
         self.table('Royal folio desk '+str(z),z,z+16,18,True,-.85)
         g=self.group('Closing royal folio '+str(z),pos=(0,0,z))
         width=18;length=16
+        deck=self.d.box(g,size=(18,.5,16.4),center=(0,.25,8))
         self.box(g,'Walkable book pages',(0,-.25,8),(width,.5,length),'Ivory')
         self.box(g,'Fixed leather cover',(0,-.65,8),(width+.4,.3,length+.4),'BookForest')
         self.box(g,'Gilded book spine',(-width/2,-.1,8),(.5,.8,length+.6),'Gold',False,shape='Cylinder')
@@ -446,7 +447,7 @@ class Builder(LegacyBuilder):
         strip=self.box(g,'Book warning bookmark',(width/2-.4,.025,8),(.4,.04,length),'Gold',False)
         volume=self.d.box(g,size=(width,4,16),center=(0,1.7,8),trigger=True)
         recovery=self.group('Previous safe book point',g,(0,0,-6 if z==-100 else -4))
-        self.d.script(g,'ClosingBook',kit.fields(cover=kit.ref(hinge['tr']),recoveryPoint=kit.ref(recovery['tr']),crushVolume=kit.ref(volume),warningStrip=kit.ref(strip['comps'][2]),openSeconds=6,warningSeconds=1,closeSeconds=.65,closedSeconds=2,reopenSeconds=1.3,respawnSeconds=2,phaseSeconds=phase))
+        self.d.script(g,'ClosingBook',kit.fields(closedDeck=kit.ref(deck),openingUpSpeed=8,openingForwardSpeed=3,cover=kit.ref(hinge['tr']),recoveryPoint=kit.ref(recovery['tr']),crushVolume=kit.ref(volume),warningStrip=kit.ref(strip['comps'][2]),openSeconds=6,warningSeconds=1,closeSeconds=.65,closedSeconds=2,reopenSeconds=1.3,respawnSeconds=2,phaseSeconds=phase))
     def library_shelf(self,x,z,side,width=None,height=None,rotation=None):
         g=self.group('Royal library bookcase '+str(x)+' '+str(z),pos=(x,-22.5,z),rot=kit.yaw(rotation if rotation is not None else (-90 if side<0 else 90)))
         width=width if width is not None else (22 if z<=-130 or z>=140 else 28)
@@ -609,7 +610,7 @@ class Builder(LegacyBuilder):
         angle=math.atan2(1.6,6)
         self.box(g,'Typewriter interior descent',(0,.8-.08*math.cos(angle),21),
             (16,.16,math.sqrt(36+1.6**2)),'EnamelBlack',rot=kit.pitch(math.degrees(angle)))
-        for i,z in enumerate((-138,-112,-80,-58,-53)):
+        for i,z in enumerate((-132,-112,-80,-58,-53)):
             x=-8 if i%2==0 else 8
             plaque=self.group('Memory clue '+str(i+1),g,(x,3.8,z+51))
             self.box(plaque,'Brass clue frame',(0,0,0),(3.2,3.2,.3),'Gold',False)

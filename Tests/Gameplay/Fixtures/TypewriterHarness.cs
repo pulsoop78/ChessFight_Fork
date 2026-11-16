@@ -23,7 +23,7 @@ namespace UnityEngine {
  public class MeshRenderer:Renderer {public object sharedMaterial;public Bounds localBounds;}
  public class MaterialPropertyBlock {public void Clear(){}}
  public class Collider {public TypewriterKey key;public T GetComponentInParent<T>() where T:class=>key as T;public ImportedObstacleActor actor;public Transform transform=new Transform();public GameObject gameObject=new GameObject();}
- public class BoxCollider:Collider {public Vector3 center,size;public Bounds bounds=>new Bounds {center=transform.TransformPoint(center),size=size};}
+ public class BoxCollider:Collider {public bool enabled=true;public Vector3 center,size;public Bounds bounds=>new Bounds {center=transform.TransformPoint(center),size=size};}
  public static class Time {public static float time,fixedDeltaTime=.02f;}
  public static class Mathf {public static float Min(float a,float b)=>Math.Min(a,b);public static float Max(float a,float b)=>Math.Max(a,b);public static float Abs(float a)=>Math.Abs(a);public static float Clamp(float n,float a,float b)=>Math.Max(a,Math.Min(b,n));public static float MoveTowards(float a,float b,float d)=>Math.Abs(b-a)<=d?b:a+Math.Sign(b-a)*d;}
  public enum QueryTriggerInteraction {Ignore}
@@ -32,7 +32,7 @@ namespace UnityEngine {
 }
 namespace ChessFight.Game {public static class RuntimePanels {public static Font KoreanFont;}public static class LitMaterials {public static void SetColor(MaterialPropertyBlock m,Color c){}}}
 namespace ChessFight.Gameplay {public static class ObstacleClock {public static bool Shared;}public class Obstacle:MonoBehaviour{} public interface IMovingSurface {Quaternion DeltaRotation{get;}Vector3 PointVelocity(Vector3 p);}}
-namespace ChessFight.ProtectKing {public class ObstacleContext {public bool Running=true,Authority=true;}public class ImportedObstacleActor {public GameObject gameObject=new GameObject();public bool CanReceiveObstacle=true,Grounded=true;public Vector3 Position,Impulse;public Collider support;public bool TryGetGroundCollider(out Collider c){c=support;return Grounded&&c!=null;}public int hits;public static ImportedObstacleActor Find(Collider c)=>c.actor;public void AddObstacleHit(Vector3 v,float stun){hits++;Impulse=v;}}}
+namespace ChessFight.ProtectKing {public class ObstacleContext {public bool Running=true,Authority=true;}public class ImportedObstacleActor {public GameObject gameObject=new GameObject();public bool CanReceiveObstacle=true,Grounded=true;public Vector3 Position,Impulse;public Collider support;public bool TryGetGroundCollider(out Collider c){c=support;return Grounded&&c!=null;}public int launches;public void LaunchFromObstacle(Vector3 v){launches++;Impulse=v;}public int hits;public static ImportedObstacleActor Find(Collider c)=>c.actor;public void AddObstacleHit(Vector3 v,float stun){hits++;Impulse=v;}}}
 class Harness {
  static void Check(bool b,string m){if(!b)throw new Exception(m);}
  static void Set(object o,string field,object v)=>o.GetType().GetField(field,BindingFlags.NonPublic|BindingFlags.Instance).SetValue(o,v);
@@ -104,6 +104,13 @@ class Harness {
   Set(book,"clock",9.7f);bookStep.Invoke(book,null);Check(crushes==1,"Opening cover cannot crush");
   Set(book,"clock",7.58f);actor.support=new Collider();for(int i=0;i<4;i++)bookStep.Invoke(book,null);Check(crushes==1,"Adjacent support is not a book crush");
   actor.Position=new Vector3(10,0,8);bookStep.Invoke(book,null);Check(crushes==1,"Outside-page feet excluded");
+  var deck=new BoxCollider{size=new Vector3(18,.5f,16.4f),center=new Vector3(0,.25f,8)};
+  Set(book,"closedDeck",deck);actor.Position=new Vector3(0,.5f,8);actor.support=deck;actor.Grounded=true;
+  Set(book,"clock",8f);bookStep.Invoke(book,null);Check(deck.enabled,"Closed book blocks walking through");
+  Set(book,"clock",9.64f);for(int i=0;i<3;i++)bookStep.Invoke(book,null);
+  Check(actor.launches==1&&!deck.enabled,"Opening launches rider once and removes closed deck");
+  actor.support=new Collider();Set(book,"clock",9.64f);for(int i=0;i<3;i++)bookStep.Invoke(book,null);
+  Check(actor.launches==1,"Opening does not launch adjacent floor actor");
   Console.WriteLine("PASS: 2000 memory layouts, row rules, hits, key depression, jump-only rebound and new-round clues");
  }
 }
