@@ -78,7 +78,7 @@ class CompleteWarRoom(unittest.TestCase):
         self.assertGreaterEqual(float(f['holdOpenSeconds']),1)
     def test_entry_spawns_and_board_preview_are_not_blocked_by_saved_walls(self):
         _,game,_=self.scripts_of('GiantChessCourse')[0]
-        self.assertEqual(float(game['tileSize']),16);self.assertEqual(float(game['replaySpeed']),5)
+        self.assertEqual(float(game['tileSize']),15);self.assertEqual(float(game['replaySpeed']),5)
         self.assertEqual(float(game['knockbackSpeed']),12)
         depth=float(game['chessSpawnDepth'])
         for i in range(12):

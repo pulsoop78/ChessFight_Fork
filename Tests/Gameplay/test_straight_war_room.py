@@ -14,7 +14,7 @@ class StraightWarRoom(unittest.TestCase):
         self.assertTrue(all(a[2]<=b[2] for a,b in zip(route,route[1:])))
         self.assertEqual(route[0],(0,0,-142));self.assertEqual(route[-1],(0,0,-4))
         for p in t.route(b,'checkpoints'):self.assertIn(p,route)
-        self.assertEqual(transform(t.data,number(f['exit'])),(0,0,169))
+        self.assertEqual(transform(t.data,number(f['exit'])),(0,0,169*15/16))
         self.assertEqual(vector(f['m_Center']) if 'm_Center' in f else (0,20,10),(0,20,10))
     def test_books_replace_maps_and_return_to_previous_table(self):
         t=self.t;books=t.scripts_of('ClosingBook');self.assertEqual(len(books),2)
@@ -75,11 +75,29 @@ class StraightWarRoom(unittest.TestCase):
         t=self.t
         for _,f,_ in t.scripts_of('ClosingBook'):
             deck=fields(t.data[str(number(f['closedDeck']))])
-            self.assertEqual(vector(deck['m_Size']),(18,.5,16.4))
-            self.assertEqual(vector(deck['m_Center']),(0,.25,8))
+            self.assertEqual(vector(deck['m_Size']),(18,1.85,16.4))
+            self.assertEqual(vector(deck['m_Center']),(0,-.275,8))
             self.assertEqual(deck['m_IsTrigger'],'0')
             self.assertEqual(float(f['openingUpSpeed']),8)
         go=next(go for go,n in t.names.items() if n=='Memory clue 1')
         p=transform(t.data,t.owners[go])
         self.assertEqual(p,(-8,3.8,-132))
         self.assertGreater(p[2],-136.4)
+
+    def test_resized_stamps_fill_table_and_chess_preview_matches_runtime(self):
+        t=self.t
+        areas=[]
+        for _,f,_ in t.scripts_of('CommandStampPress'):
+            collider=fields(t.data[str(number(f['impactArea']))]);size=vector(collider['m_Size'])
+            self.assertEqual(size[0],9)
+            p=transform(t.data,t.owners[number(collider['m_GameObject'])])
+            areas.append((p[0]-size[0]/2,p[0]+size[0]/2))
+        self.assertEqual(sorted(areas),[(-9,0),(0,9)])
+        _,game,_=t.scripts_of('GiantChessCourse')[0]
+        self.assertEqual(float(game['tileSize']),15)
+        preview=number(game['boardPreview']);tid=t.owners[preview]
+        self.assertEqual(transform(t.data,tid,(-64,0,128)),(-60,0,120))
+        sides=[(lo,hi) for name,lo,hi,_ in t.boxes if name=='HQ side wall']
+        self.assertAlmostEqual(max(hi[0] for lo,hi in sides),125*15/16)
+        pages=[(lo,hi) for name,lo,hi,_ in t.boxes if name=='Walkable book pages']
+        self.assertTrue(all(abs(hi[1])<.001 and abs(lo[1]+1.2)<.001 for lo,hi in pages))

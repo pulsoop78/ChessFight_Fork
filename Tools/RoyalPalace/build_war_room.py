@@ -382,7 +382,7 @@ class LegacyBuilder:
         self.d.script(self.root,'PhysicsProfile',kit.fields(physicsRate=120,solverIterations=24))
         self.d.script(self.root,'GiantChessCourse',kit.fields(
             pawnPrefab='{fileID: 7684884123511159585, guid: fe69acb7e49fea745aa289c4d39f3e62, type: 3}',
-            tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=16,replaySpeed=5,
+            tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=15,replaySpeed=5,
             moveSeconds=3,warningSeconds=5,restSeconds=2,knockbackSpeed=12,upwardSpeed=9,botsEnabled=1,boardPreview=kit.ref(self.preview['go']),chessSpawnDepth=4))
         self.d.script(self.root,'GiantChessApproach',kit.fields(course=kit.ref(self.source_module[0]),chessEntry=kit.ref(self.chessEntry['tr']))+
             '  transitionRoute:\n'+''.join('  - '+kit.ref(p['tr'])+'\n' for p in self.transitions))
@@ -431,19 +431,19 @@ class Builder(LegacyBuilder):
                 self.box(self.root,name+' carved leg '+str(side)+' '+str(z),(side*(width/2-1.2),-11,z),(1.8,20,1.8),'RoyalIvory',False)
                 self.box(self.root,name+' leg ferrule '+str(side)+' '+str(z),(side*(width/2-1.2),-20.5,z),(2,1,2),'Gold',False)
     def book(self,z,phase):
-        self.table('Royal folio desk '+str(z),z,z+16,18,True,-.85)
+        self.table('Royal folio desk '+str(z),z,z+16,18,True,-1.6)
         g=self.group('Closing royal folio '+str(z),pos=(0,0,z))
         width=18;length=16
-        deck=self.d.box(g,size=(18,.5,16.4),center=(0,.25,8))
-        self.box(g,'Walkable book pages',(0,-.25,8),(width,.5,length),'Ivory')
-        self.box(g,'Fixed leather cover',(0,-.65,8),(width+.4,.3,length+.4),'BookForest')
+        deck=self.d.box(g,size=(18,1.85,16.4),center=(0,-.275,8))
+        self.box(g,'Walkable book pages',(0,-.6,8),(width,1.2,length),'Ivory')
+        self.box(g,'Fixed leather cover',(0,-1.35,8),(width+.4,.3,length+.4),'BookForest')
         self.box(g,'Gilded book spine',(-width/2,-.1,8),(.5,.8,length+.6),'Gold',False,shape='Cylinder')
         for line in range(7):
             self.box(g,'Printed folio line '+str(line),(0,.015,2+line*1.8),(12,.02,.07),'Slate',False)
         hinge=self.group('Horizontal closing cover',g,(-width/2,.35,8))
-        self.box(hinge,'Moving leather cover',(-width/2,0,0),(width,.3,length+.4),'BookForest',False)
-        self.box(hinge,'Moving ivory page',(-width/2,.18,0),(width-.3,.04,length),'Ivory',False)
-        self.box(hinge,'Royal cover crest',(-width/2,-.18,0),(4,.04,5),'Gold',False)
+        self.box(hinge,'Moving leather cover',(-width/2,0,0),(width,.6,length+.4),'BookForest',False)
+        self.box(hinge,'Moving ivory page',(-width/2,.34,0),(width-.3,.04,length),'Ivory',False)
+        self.box(hinge,'Royal cover crest',(-width/2,-.34,0),(4,.04,5),'Gold',False)
         strip=self.box(g,'Book warning bookmark',(width/2-.4,.025,8),(.4,.04,length),'Gold',False)
         volume=self.d.box(g,size=(width,4,16),center=(0,1.7,8),trigger=True)
         recovery=self.group('Previous safe book point',g,(0,0,-6 if z==-100 else -4))
@@ -627,6 +627,23 @@ class Builder(LegacyBuilder):
         for sq in range(64):
             self.box(g,'Square '+str(sq),(sq%8-3.5,4+sq//8-3.5,-.3),(.98,.98,.08),'White' if (sq%8+sq//8)%2 else 'Slate',False)
         self.d.script(g,'WarRoomScoreLabel',kit.fields(previewFraction=fraction))
+    def fit_chess_room(self):
+        ratio=15/16
+        for obj in self.d.all:
+            if obj is self.root or obj is self.hq:continue
+            parent=obj.get('parent');x,y,z=obj['pos']
+            if parent is self.hq:
+                if obj['name']=='HQ front facade':
+                    edge=124*ratio;obj['pos']=((1 if x>0 else -1)*(8+edge)/2,y,-10);obj['scale']=(edge-8,obj['scale'][1],obj['scale'][2]);continue
+                # Keep the existing 16m-wide approach doorway aligned with the typewriter tunnel.
+                if z<0 and abs(x)<10:continue
+                if obj['name']=='Board preview - replaced by live chess on Play':
+                    obj['scale']=(ratio,1,ratio);continue
+                obj['pos']=(x*ratio,y,z*ratio if z>=0 else z)
+                sx,sy,sz=obj['scale'];obj['scale']=(sx*ratio,sy,sz*ratio)
+            elif parent is self.root and (z>=0 or (z>=-10 and abs(x)>38)):
+                obj['pos']=(x*ratio,y,z*ratio if z>=0 else z)
+                sx,sy,sz=obj['scale'];obj['scale']=(sx*ratio,sy,sz*ratio)
     def save(self):
         for x in (-160,160):self.wall(self.root,'Square perimeter side '+str(x),(x,20,10),(2,60,320))
         for x in (-83,83):self.wall(self.root,'Square perimeter entrance '+str(x),(x,20,-150),(154,60,2))
@@ -639,7 +656,7 @@ class Builder(LegacyBuilder):
         self.table('Approach floor -60',-60,-51,18)
         self.table('Approach floor -27',-27,-8,16)
         self.table('Typewriter furniture base',-51,-27,25,True,-.8)
-        self.press(-122,-3,6,0);self.press(-122,3,6,2.675)
+        self.press(-122,-4.5,9,0);self.press(-122,4.5,9,2.675)
         self.book(-100,0);self.book(-76,3)
         self.table('Fixed seal island',-84,-76,18)
         self.box(self.root,'Royal seal rest island',(0,.025,-80),(5,.05,5),'Gold',False,shape='Cylinder')
@@ -670,8 +687,9 @@ class Builder(LegacyBuilder):
         def arr(name,objs):return '  '+name+':\n'+''.join('  - '+kit.ref(o['tr'])+'\n' for o in objs)
         module=self.d.script(self.root,'CourseModule',kit.fields(courseId='"3-1-HQ"',displayName='"왕의 서재와 거대 체스판"',entry=kit.ref(entry['tr']),exit=kit.ref(self.exit['tr']),minigameSlot=kit.ref(self.hq['tr']),targetSeconds=150,laneWidth=18)+arr('checkpoints',cps)+arr('route',route)+'  placementBounds:\n    m_Center: {x: 0, y: 20, z: 10}\n    m_Extent: {x: 162, y: 50, z: 162}\n')
         self.c.context(self.root);self.d.script(self.root,'PhysicsProfile',kit.fields(physicsRate=120,solverIterations=24))
-        self.d.script(self.root,'GiantChessCourse',kit.fields(pawnPrefab='{fileID: 7684884123511159585, guid: fe69acb7e49fea745aa289c4d39f3e62, type: 3}',tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=16,replaySpeed=5,moveSeconds=3,warningSeconds=5,restSeconds=2,knockbackSpeed=12,upwardSpeed=9,botsEnabled=1,boardPreview=kit.ref(self.preview['go']),chessSpawnDepth=4))
+        self.d.script(self.root,'GiantChessCourse',kit.fields(pawnPrefab='{fileID: 7684884123511159585, guid: fe69acb7e49fea745aa289c4d39f3e62, type: 3}',tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=15,replaySpeed=5,moveSeconds=3,warningSeconds=5,restSeconds=2,knockbackSpeed=12,upwardSpeed=9,botsEnabled=1,boardPreview=kit.ref(self.preview['go']),chessSpawnDepth=4))
         self.d.script(self.root,'GiantChessApproach',kit.fields(course=kit.ref(module),chessEntry=kit.ref(end['tr']))+'  transitionRoute: []\n')
+        self.fit_chess_room()
         text,ids=stabilize(clean(self.d.render(scene=False)));self.serialized_root=ids[self.root['tr']]
         self.report.update(root=ids[self.root['go']],root_transform=self.serialized_root,local_id_scheme='hierarchy-type-sha256-v2',target_seconds=[120,180],preview_fractions=[0,.25,.55,.9])
         return text

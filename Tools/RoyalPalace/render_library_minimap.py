@@ -18,7 +18,7 @@ def rect(x0,z0,x1,z1,fill,outline=None,width=2):
 def text(p,s,n=20,color='#dce5ee'):d.text(p,s,font=f(n),fill=color)
 text((60,35),'왕의 서재 · 코스 미니맵',40)
 text((62,96),'저장된 프리팹 배치 기준  |  아래에서 진입 → 위쪽 출구',21,'#a9bed2')
-rect(-124,-10,124,170,'#263342','#72869a',4)
+rect(-124*15/16,-10,124*15/16,170*15/16,'#263342','#72869a',4)
 rect(-38,-150,38,-10,'#263342','#72869a',4)
 for name in ('Approach floor -146','Dispatch table after jump','Approach floor -60','Approach floor -27','Fixed seal island','Typewriter furniture base','Final exit walkway'):
  go=next(k for k,v in names.items() if v==name);tid=trans[go]
@@ -27,13 +27,13 @@ for z in (-100,-76):
  rect(-9,z,9,z+16,'#e7dec3','#bfa77b');rect(-27,z, -9,z+16,'#ab8bb5','#d3bde0')
 rect(-8,-51,8,-27,'#161b24','#93a4b2')
 for z in range(8):
- for x in range(8):rect(-64+x*16,z*16,-48+x*16,z*16+16,'#c8c2ae' if (x+z)%2==0 else '#485568')
-for x in (-86,86):
- rect(x-11,51,x+11,77,'#866048','#c4a474');text((point(x,64)[0]-19,point(x,64)[1]-13),'GM',18)
+ for x in range(8):rect(-60+x*15,z*15,-45+x*15,z*15+15,'#c8c2ae' if (x+z)%2==0 else '#485568')
+for x in (-86*15/16,86*15/16):
+ rect(x-11*15/16,51*15/16,x+11*15/16,77*15/16,'#866048','#c4a474');text((point(x,60)[0]-19,point(x,60)[1]-13),'GM',18)
 for go,name in names.items():
  p=transform(records,trans[go]);x,z=p[0],p[2]
  if name.startswith('Royal library bookcase'):
-  if z==166 or z==-7:rect(x-7,z-1.8,x+7,z+1.8,'#c19152','#ead0a0')
+  if name.endswith(' 166') or name.endswith(' -7'):rect(x-7,z-1.8,x+7,z+1.8,'#c19152','#ead0a0')
   else:rect(x-1.8,z-7,x+1.8,z+7,'#c19152','#ead0a0')
  elif name.startswith(('Giant chess conservatory plant','Library gallery houseplant')):
   px,py=point(x,z)
@@ -42,11 +42,11 @@ for go,name in names.items():
   px,py=point(x,z);d.rectangle((px-6,py-11,px+6,py+11),fill='#b9d8e5',outline='#f6ce72',width=2)
 rect(95,47,118,82,'#705b7d','#b79cc5')
 # Route denotes direction, not safe chess squares or correct keyboard letters.
-for z in range(-140,165,7):d.line((point(0,z),point(0,z+3)),fill='#f5cf76',width=4)
+for z in range(-140,157,7):d.line((point(0,z),point(0,z+3)),fill='#f5cf76',width=4)
 for z in (-130,-55,0,64,157):
  px,py=point(0,z);d.polygon(((px,py-8),(px-7,py+6),(px+7,py+6)),fill='#f5cf76')
 px,py=point(0,-136.4);d.ellipse((px-23,py-11,px+23,py+11),outline='#74e4eb',width=4)
-stages=[(-136.4,'차원문 · 좁은 통로에서 서재 공개'),(-122,'도장 탁자'),(-92,'덮히는 책 ①'),(-80,'인장 휴식 탁자'),(-68,'덮히는 책 ②'),(-43,'기억 타자기'),(64,'왕의 거대 체스 탁자'),(163,'다음 구간 출구')]
+stages=[(-136.4,'차원문 · 좁은 통로에서 서재 공개'),(-122,'도장 탁자'),(-92,'덮히는 책 ①'),(-80,'인장 휴식 탁자'),(-68,'덮히는 책 ②'),(-43,'기억 타자기'),(64,'왕의 거대 체스 탁자'),(158,'다음 구간 출구')]
 for i,(z,label) in enumerate(stages,1):
  px,py=point(0,z);x=px+54 if i%2 else px-54
  d.line((px,py,x,py),fill='#f5cf76',width=2);d.ellipse((x-13,py-13,x+13,py+13),fill='#e7bd63');text((x-6,py-12),str(i),17,'#182333')
