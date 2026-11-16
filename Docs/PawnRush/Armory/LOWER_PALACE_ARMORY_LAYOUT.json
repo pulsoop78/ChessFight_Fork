@@ -1,0 +1,255 @@
+{
+  "id": "2-3",
+  "name": "아랫궁 · 근위대 무구실",
+  "status": "레벨디자인 초안 · Unity 미구현",
+  "room_m": [
+    160,
+    180
+  ],
+  "path_width_m": 12,
+  "route_xz_m": [
+    [
+      80,
+      12
+    ],
+    [
+      58,
+      12
+    ],
+    [
+      58,
+      60
+    ],
+    [
+      102,
+      60
+    ],
+    [
+      102,
+      96
+    ],
+    [
+      58,
+      96
+    ],
+    [
+      58,
+      136
+    ],
+    [
+      102,
+      136
+    ],
+    [
+      102,
+      160
+    ],
+    [
+      80,
+      160
+    ],
+    [
+      80,
+      178
+    ]
+  ],
+  "route_planar_length_m": 342.0,
+  "course_heights_m": [
+    0,
+    3,
+    6,
+    6
+  ],
+  "static_ramps": [
+    {
+      "from_xz": [
+        70,
+        60
+      ],
+      "to_xz": [
+        88,
+        60
+      ],
+      "rise_m": 3
+    },
+    {
+      "from_xz": [
+        90,
+        96
+      ],
+      "to_xz": [
+        72,
+        96
+      ],
+      "rise_m": 3
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "S",
+      "xz": [
+        80,
+        12
+      ]
+    },
+    {
+      "id": "C1",
+      "xz": [
+        58,
+        20
+      ]
+    },
+    {
+      "id": "C2",
+      "xz": [
+        102,
+        64
+      ]
+    },
+    {
+      "id": "C3",
+      "xz": [
+        58,
+        102
+      ]
+    },
+    {
+      "id": "C4",
+      "xz": [
+        102,
+        133
+      ]
+    },
+    {
+      "id": "E",
+      "xz": [
+        80,
+        170
+      ]
+    }
+  ],
+  "hazards": [
+    {
+      "id": 1,
+      "name": "회전 방패",
+      "reuse": "#04 회전 해머 외형",
+      "count": 2,
+      "centres_xz": [
+        [
+          58,
+          30
+        ],
+        [
+          58,
+          46
+        ]
+      ],
+      "height_m": 0,
+      "allocated_seconds": 44
+    },
+    {
+      "id": 2,
+      "name": "갑옷 수레",
+      "reuse": "#03 왕복 밀대 외형",
+      "count": 3,
+      "centres_xz": [
+        [
+          102,
+          70
+        ],
+        [
+          102,
+          80
+        ],
+        [
+          102,
+          90
+        ]
+      ],
+      "height_m": 3,
+      "allocated_seconds": 57
+    },
+    {
+      "id": 3,
+      "name": "낙하 투구",
+      "reuse": "#10 낙하기물 외형",
+      "count": 2,
+      "centres_xz": [
+        [
+          58,
+          112
+        ],
+        [
+          58,
+          124
+        ]
+      ],
+      "height_m": 6,
+      "allocated_seconds": 60.6
+    },
+    {
+      "id": 4,
+      "name": "나이트 돌진",
+      "reuse": "#17 고정 경로 돌진",
+      "count": 1,
+      "centres_xz": [
+        [
+          102,
+          148
+        ]
+      ],
+      "charge_from_xz": [
+        102,
+        148
+      ],
+      "charge_to_xz": [
+        102,
+        140
+      ],
+      "hazard_envelope_z": [
+        138,
+        150
+      ],
+      "height_m": 6,
+      "allocated_seconds": 64.2
+    }
+  ],
+  "transition": {
+    "allocated_seconds": 31,
+    "last_hazard_z": 150,
+    "safe_terrace_xz": [
+      80,
+      170
+    ],
+    "safe_terrace_size_m": [
+      12,
+      6
+    ],
+    "clear_route_to_terrace_m": 39,
+    "arch_z": 176,
+    "arch_clear_width_m": 12,
+    "arch_min_height_m": 5,
+    "down_steps": 4,
+    "step_height_m": 0.25,
+    "entry_strip_depth_m": 4,
+    "next_stage_height_m": 5
+  },
+  "time_budget": {
+    "reference_move_mps": 2.5,
+    "travel_seconds": 136.8,
+    "reaction_wait_seconds": 60,
+    "retry_seconds": 45,
+    "boundary_reading_seconds": 15,
+    "total_seconds": 256.8,
+    "goal": "평균 약4분~4분40초, 일반 플레이 5분 안쪽 목표 / 실측 전"
+  },
+  "source_documents": [
+    "manifest_v2_phase2.json: id=2-3",
+    "notes_v2_phase2.md: 2-3",
+    "01_설계_기준.md",
+    "02_장소별_코스_설계.md: 2-3",
+    "장소_목록_v2.json: id=2-3",
+    "04_미니게임_경계_설계.svg"
+  ],
+  "scope_note": "첨부의 기존 6비트/평균4분은 참고. 최신 요청에 따라 장애물4종, 총8장치. 승강대/점핑패드/셔터는 제외. 모든 시간은 플레이테스트 전 추정."
+}
