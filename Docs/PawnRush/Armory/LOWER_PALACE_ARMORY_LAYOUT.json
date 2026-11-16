@@ -131,87 +131,86 @@
   "hazards": [
     {
       "id": 1,
-      "name": "회전 방패",
-      "reuse": "#04 회전 해머 외형",
-      "count": 2,
-      "centres_xz": [
-        [
-          58,
-          30
-        ],
-        [
-          58,
-          46
-        ]
-      ],
+      "name": "랜덤 창 바닥",
       "height_m": 0,
-      "allocated_seconds": 44
+      "envelope_xz": [
+        52,
+        24,
+        64,
+        48
+      ],
+      "grid_columns": 4,
+      "grid_rows": 6,
+      "guarantee": "예고부터 상승까지 도달 가능한 연결 안전 경로 유지",
+      "allocated_seconds": 49
     },
     {
       "id": 2,
-      "name": "갑옷 수레",
-      "reuse": "#03 왕복 밀대 외형",
-      "count": 3,
-      "centres_xz": [
+      "name": "듀라한 내려찍기",
+      "height_m": 3,
+      "envelope_xz": [
+        96,
+        70,
+        108,
+        94
+      ],
+      "statues_xz": [
         [
-          102,
-          70
+          91,
+          74
         ],
         [
-          102,
-          80
-        ],
-        [
-          102,
-          90
+          113,
+          87
         ]
       ],
-      "height_m": 3,
-      "allocated_seconds": 57
+      "weapon_styles": [
+        "긴 대검 타격선",
+        "넓은 도끼 부채꼴"
+      ],
+      "allocated_seconds": 61
     },
     {
       "id": 3,
-      "name": "낙하 투구",
-      "reuse": "#10 낙하기물 외형",
-      "count": 2,
-      "centres_xz": [
-        [
-          58,
-          112
-        ],
-        [
-          58,
-          124
-        ]
-      ],
+      "name": "휴대 방패 사격장",
       "height_m": 6,
-      "allocated_seconds": 60.6
+      "envelope_xz": [
+        52,
+        108,
+        64,
+        128
+      ],
+      "shield_supply_xz": [
+        58,
+        104
+      ],
+      "shield_count_initial": 3,
+      "replenish_rule": "분실/낙하/구간 밖 반출 시 짧은 지연 후 재보급, 적이 보급을 영구 봉쇄할 수 없음",
+      "solo_passable": true,
+      "allocated_seconds": 66.6
     },
     {
       "id": 4,
-      "name": "나이트 돌진",
-      "reuse": "#17 고정 경로 돌진",
-      "count": 1,
-      "centres_xz": [
+      "name": "갑옷 감시 회랑",
+      "height_m": 6,
+      "envelope_xz": [
+        96,
+        138,
+        108,
+        150
+      ],
+      "observer_xz": [
         [
-          102,
+          94,
+          145
+        ],
+        [
+          110,
           148
         ]
       ],
-      "charge_from_xz": [
-        102,
-        148
-      ],
-      "charge_to_xz": [
-        102,
-        140
-      ],
-      "hazard_envelope_z": [
-        138,
-        150
-      ],
-      "height_m": 6,
-      "allocated_seconds": 64.2
+      "detection_rule": "시야 안 실제 자발적 이동만 검사, 강제 이동/래그돌 흔들림/기절 입력 제외",
+      "allocated_seconds": 61.2
     }
   ],
   "transition": {
@@ -237,11 +236,11 @@
   "time_budget": {
     "reference_move_mps": 2.5,
     "travel_seconds": 136.8,
-    "reaction_wait_seconds": 60,
+    "reaction_wait_seconds": 72,
     "retry_seconds": 45,
     "boundary_reading_seconds": 15,
-    "total_seconds": 256.8,
-    "goal": "평균 약4분~4분40초, 일반 플레이 5분 안쪽 목표 / 실측 전"
+    "total_seconds": 268.8,
+    "goal": "약4분30초, 일반 플레이 5분 안쪽 목표 / 실측 전"
   },
   "source_documents": [
     "manifest_v2_phase2.json: id=2-3",
@@ -251,5 +250,6 @@
     "장소_목록_v2.json: id=2-3",
     "04_미니게임_경계_설계.svg"
   ],
-  "scope_note": "첨부의 기존 6비트/평균4분은 참고. 최신 요청에 따라 장애물4종, 총8장치. 승강대/점핑패드/셔터는 제외. 모든 시간은 플레이테스트 전 추정."
+  "revision": 2,
+  "scope_note": "사용자가 확정한 새4종. 기존 방패회전/수레/낙하투구/나이트돌진은 제외. 현재 결과는 미니맵 기획만이며 Unity 미구현."
 }

@@ -3,9 +3,9 @@
 <rect x="0" y="0" width="2240" height="188" rx="0" fill="#243645" stroke="none" stroke-width="1"/>
 <rect x="54" y="42" width="11" height="98" rx="0" fill="#cfab5e" stroke="none" stroke-width="1"/>
 <text x="88.00" y="82.52" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="53" fill="#fff6df">아랫궁 · 근위대 무구실</text>
-<text x="90.00" y="134.68" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="27" fill="#d6dfdf">왕실 무기 선반을 타고 올라가는 4개 장애물 코스</text>
+<text x="90.00" y="134.68" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="27" fill="#d6dfdf">랜덤 창 바닥 → 듀라한 → 방패 사격장 → 감시 회랑</text>
 <rect x="1650" y="41" width="538" height="102" rx="13" fill="#324a57" stroke="none" stroke-width="1"/>
-<text x="1680.00" y="78.36" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="29" fill="#f6d687">4종 / 8개 장치</text>
+<text x="1680.00" y="78.36" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="29" fill="#f6d687">새 장애물 4종 / 4구간</text>
 <text x="1680.00" y="118.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#e6e9e3">통과 목표 4~5분  ·  6대6</text>
 <rect x="50" y="223" width="1020" height="1212" rx="18" fill="#faf7ef" stroke="#cfc3ab" stroke-width="2"/>
 <text x="84.00" y="273.72" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="33" fill="#263645">미니맵 약도</text>
@@ -176,59 +176,116 @@
 <polyline points="556.75,793.25 556.75,740.75" fill="none" stroke="#998061" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline points="572.5,767.0 478.0,767.0" fill="none" stroke="#577b84" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
 <polygon points="478.00,767.00 488.00,761.50 488.00,772.50" fill="#577b84" stroke="none" stroke-width="1"/>
-<ellipse cx="404.5" cy="1113.5" rx="31.5" ry="31.5" fill="#e5bd88" stroke="#bb6641" stroke-width="2"/>
-<polyline points="404.5,1113.5 425.17,1121.02" fill="none" stroke="#765339" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-<ellipse cx="425.17323765729" cy="1121.0244431531646" rx="10.0" ry="10.0" fill="#52677b" stroke="#e4bb64" stroke-width="3"/>
-<polyline points="404.5,1113.5 387.65,1127.64" fill="none" stroke="#765339" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-<ellipse cx="387.6470222513825" cy="1127.641327413104" rx="10.0" ry="10.0" fill="#52677b" stroke="#e4bb64" stroke-width="3"/>
-<polyline points="404.5,1113.5 400.68,1091.83" fill="none" stroke="#765339" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-<ellipse cx="400.6797400913275" cy="1091.8342294337315" rx="10.0" ry="10.0" fill="#52677b" stroke="#e4bb64" stroke-width="3"/>
-<ellipse cx="404.5" cy="1113.5" rx="4.725000000000023" ry="4.724999999999909" fill="#e8ca7b" stroke="none" stroke-width="1"/>
-<ellipse cx="404.5" cy="1029.5" rx="31.5" ry="31.5" fill="#e5bd88" stroke="#bb6641" stroke-width="2"/>
-<polyline points="404.5,1029.5 425.17,1037.02" fill="none" stroke="#765339" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-<ellipse cx="425.17323765729" cy="1037.0244431531646" rx="10.0" ry="10.0" fill="#52677b" stroke="#e4bb64" stroke-width="3"/>
-<polyline points="404.5,1029.5 387.65,1043.64" fill="none" stroke="#765339" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-<ellipse cx="387.6470222513825" cy="1043.641327413104" rx="10.0" ry="10.0" fill="#52677b" stroke="#e4bb64" stroke-width="3"/>
-<polyline points="404.5,1029.5 400.68,1007.83" fill="none" stroke="#765339" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-<ellipse cx="400.6797400913275" cy="1007.8342294337315" rx="10.0" ry="10.0" fill="#52677b" stroke="#e4bb64" stroke-width="3"/>
-<ellipse cx="404.5" cy="1029.5" rx="4.725000000000023" ry="4.724999999999909" fill="#e8ca7b" stroke="none" stroke-width="1"/>
+<rect x="373.79" y="1124.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="389.54" y="1124.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="405.29" y="1124.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#e0b36e" stroke="#8f876e" stroke-width="1"/>
+<polyline points="412.38,1141.5 412.38,1128.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="412.38,1123.50 407.38,1131.50 417.38,1131.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="421.04" y="1124.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#c98474" stroke="#8f876e" stroke-width="1"/>
+<polyline points="428.12,1141.5 428.12,1128.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="428.12,1123.50 423.12,1131.50 433.12,1131.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="373.79" y="1103.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#c98474" stroke="#8f876e" stroke-width="1"/>
+<polyline points="380.88,1120.5 380.88,1107.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="380.88,1102.50 375.88,1110.50 385.88,1110.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="389.54" y="1103.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="405.29" y="1103.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="421.04" y="1103.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#e0b36e" stroke="#8f876e" stroke-width="1"/>
+<polyline points="428.12,1120.5 428.12,1107.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="428.12,1102.50 423.12,1110.50 433.12,1110.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="373.79" y="1082.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#e0b36e" stroke="#8f876e" stroke-width="1"/>
+<polyline points="380.88,1099.5 380.88,1086.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="380.88,1081.50 375.88,1089.50 385.88,1089.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="389.54" y="1082.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="405.29" y="1082.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="421.04" y="1082.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#c98474" stroke="#8f876e" stroke-width="1"/>
+<polyline points="428.12,1099.5 428.12,1086.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="428.12,1081.50 423.12,1089.50 433.12,1089.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="373.79" y="1061.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#c98474" stroke="#8f876e" stroke-width="1"/>
+<polyline points="380.88,1078.5 380.88,1065.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="380.88,1060.50 375.88,1068.50 385.88,1068.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="389.54" y="1061.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#e0b36e" stroke="#8f876e" stroke-width="1"/>
+<polyline points="396.62,1078.5 396.62,1065.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="396.62,1060.50 391.62,1068.50 401.62,1068.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="405.29" y="1061.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="421.04" y="1061.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="373.79" y="1040.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#e0b36e" stroke="#8f876e" stroke-width="1"/>
+<polyline points="380.88,1057.5 380.88,1044.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="380.88,1039.50 375.88,1047.50 385.88,1047.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="389.54" y="1040.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="405.29" y="1040.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="421.04" y="1040.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#c98474" stroke="#8f876e" stroke-width="1"/>
+<polyline points="428.12,1057.5 428.12,1044.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="428.12,1039.50 423.12,1047.50 433.12,1047.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="373.79" y="1019.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="389.54" y="1019.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#9dc7ad" stroke="#8f876e" stroke-width="1"/>
+<rect x="405.29" y="1019.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#c98474" stroke="#8f876e" stroke-width="1"/>
+<polyline points="412.38,1036.5 412.38,1023.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="412.38,1018.50 407.38,1026.50 417.38,1026.50" fill="#435766" stroke="none" stroke-width="1"/>
+<rect x="421.04" y="1019.79" width="14.169999999999959" height="19.420000000000073" rx="0" fill="#e0b36e" stroke="#8f876e" stroke-width="1"/>
+<polyline points="428.12,1036.5 428.12,1023.5" fill="none" stroke="#435766" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="428.12,1018.50 423.12,1026.50 433.12,1026.50" fill="#435766" stroke="none" stroke-width="1"/>
 <rect x="341.5" y="1145.0" width="31.5" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
-<rect x="341.5" y="1061.0" width="31.5" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
-<polyline points="567.25,903.5 703.75,903.5" fill="none" stroke="#738b90" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<rect x="604.0" y="898.25" width="63.0" height="10.5" rx="0" fill="#586977" stroke="#d9b55e" stroke-width="3"/>
-<ellipse cx="614.5" cy="911.9" rx="3.4125000000000227" ry="3.4125000000000227" fill="#263b48" stroke="none" stroke-width="1"/>
-<ellipse cx="656.5" cy="911.9" rx="3.4125000000000227" ry="3.4125000000000227" fill="#263b48" stroke="none" stroke-width="1"/>
-<polygon points="626.50,890.50 644.50,890.50 642.50,910.50 635.50,915.50 628.50,910.50" fill="#c9d0cc" stroke="#c59f4a" stroke-width="2"/>
-<polyline points="567.25,851.0 703.75,851.0" fill="none" stroke="#738b90" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<rect x="604.0" y="845.75" width="63.0" height="10.5" rx="0" fill="#586977" stroke="#d9b55e" stroke-width="3"/>
-<ellipse cx="614.5" cy="859.4" rx="3.4125000000000227" ry="3.4125000000000227" fill="#263b48" stroke="none" stroke-width="1"/>
-<ellipse cx="656.5" cy="859.4" rx="3.4125000000000227" ry="3.4125000000000227" fill="#263b48" stroke="none" stroke-width="1"/>
-<polygon points="626.50,838.00 644.50,838.00 642.50,858.00 635.50,863.00 628.50,858.00" fill="#c9d0cc" stroke="#c59f4a" stroke-width="2"/>
-<polyline points="567.25,798.5 703.75,798.5" fill="none" stroke="#738b90" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<rect x="604.0" y="793.25" width="63.0" height="10.5" rx="0" fill="#586977" stroke="#d9b55e" stroke-width="3"/>
-<ellipse cx="614.5" cy="806.9" rx="3.4125000000000227" ry="3.4125000000000227" fill="#263b48" stroke="none" stroke-width="1"/>
-<ellipse cx="656.5" cy="806.9" rx="3.4125000000000227" ry="3.4125000000000227" fill="#263b48" stroke="none" stroke-width="1"/>
-<polygon points="626.50,785.50 644.50,785.50 642.50,805.50 635.50,810.50 628.50,805.50" fill="#c9d0cc" stroke="#c59f4a" stroke-width="2"/>
-<rect x="572.5" y="866.75" width="31.5" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
-<rect x="572.5" y="814.25" width="31.5" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
-<ellipse cx="404.5" cy="683.0" rx="31.5" ry="31.5" fill="#edc9a4" stroke="#bf794c" stroke-width="3"/>
-<ellipse cx="404.5" cy="679.0" rx="13.0" ry="14.0" fill="#7f8e95" stroke="#e9c473" stroke-width="3"/>
-<rect x="395.5" y="679.0" width="18.0" height="6.0" rx="0" fill="#293b45" stroke="none" stroke-width="1"/>
-<polyline points="404.5,666.0 404.5,692.0" fill="none" stroke="#d3b36e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<ellipse cx="404.5" cy="620.0" rx="31.5" ry="31.5" fill="#edc9a4" stroke="#bf794c" stroke-width="3"/>
-<ellipse cx="404.5" cy="616.0" rx="13.0" ry="14.0" fill="#7f8e95" stroke="#e9c473" stroke-width="3"/>
-<rect x="395.5" y="616.0" width="18.0" height="6.0" rx="0" fill="#293b45" stroke="none" stroke-width="1"/>
-<polyline points="404.5,603.0 404.5,629.0" fill="none" stroke="#d3b36e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<rect x="346.75" y="704.0" width="26.25" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
-<rect x="357.25" y="707.15" width="10.5" height="14.700000000000045" rx="0" fill="#76563d" stroke="#cdac6d" stroke-width="2"/>
-<rect x="346.75" y="641.0" width="26.25" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
-<rect x="357.25" y="644.15" width="10.5" height="14.700000000000045" rx="0" fill="#76563d" stroke="#cdac6d" stroke-width="2"/>
-<rect x="604.0" y="483.5" width="63.0" height="63.0" rx="0" fill="#d2a28e" stroke="#b26648" stroke-width="3"/>
-<rect x="667.0" y="504.5" width="31.5" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
-<polygon points="620.50,521.50 623.50,504.50 613.50,500.50 620.50,484.50 628.50,477.50 631.50,487.50 644.50,492.50 651.50,521.50" fill="#596e7c" stroke="#e4bf66" stroke-width="3"/>
-<ellipse cx="627.5" cy="491.5" rx="2.0" ry="2.0" fill="#f6e3a7" stroke="none" stroke-width="1"/>
-<polyline points="635.5,525.5 635.5,541.25" fill="none" stroke="#a94e39" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-<polygon points="635.50,541.25 630.00,531.25 641.00,531.25" fill="#a94e39" stroke="none" stroke-width="1"/>
+<rect x="341.5" y="998.0" width="31.5" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
+<rect x="564.62" y="866.75" width="26.25999999999999" height="31.5" rx="0" fill="#596d7c" stroke="#d7b36c" stroke-width="2"/>
+<ellipse cx="577.75" cy="882.5" rx="6.0" ry="6.0" fill="#263744" stroke="#d3b26d" stroke-width="2"/>
+<rect x="680.12" y="798.5" width="26.25999999999999" height="31.5" rx="0" fill="#596d7c" stroke="#d7b36c" stroke-width="2"/>
+<ellipse cx="693.25" cy="814.25" rx="6.0" ry="6.0" fill="#263744" stroke="#d3b26d" stroke-width="2"/>
+<rect x="604.0" y="861.5" width="63.0" height="42.0" rx="0" fill="#dda88a" stroke="#bd7353" stroke-width="2"/>
+<polyline points="577.75,882.5 667.0,882.5" fill="none" stroke="#c6d1cf" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="667.50,882.50 651.50,877.50 651.50,887.50" fill="#ecdfbc" stroke="none" stroke-width="1"/>
+<polygon points="693.25,814.25 604.00,840.50 604.00,777.50" fill="#c99081" stroke="#bb6655" stroke-width="2"/>
+<polyline points="693.25,814.25 630.25,814.25" fill="none" stroke="#8e7956" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="630.50,800.25 644.50,805.25 644.50,823.25 630.50,828.25" fill="#73868c" stroke="#e4bd67" stroke-width="2"/>
+<rect x="667.0" y="835.25" width="31.5" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
+<rect x="667.0" y="756.5" width="31.5" height="21.0" rx="0" fill="#96c1b2" stroke="#d8e7d8" stroke-width="2"/>
+<rect x="373.0" y="717.12" width="63.0" height="15.759999999999991" rx="0" fill="#a6c9b3" stroke="#789b87" stroke-width="2"/>
+<polygon points="374.50,715.00 392.50,715.00 390.50,732.00 383.50,739.00 376.50,732.00" fill="#57768a" stroke="#e8c471" stroke-width="2"/>
+<polygon points="395.50,715.00 413.50,715.00 411.50,732.00 404.50,739.00 397.50,732.00" fill="#57768a" stroke="#e8c471" stroke-width="2"/>
+<polygon points="416.50,715.00 434.50,715.00 432.50,732.00 425.50,739.00 418.50,732.00" fill="#57768a" stroke="#e8c471" stroke-width="2"/>
+<polyline points="374.5,593.75 392.5,593.75" fill="none" stroke="#8b6747" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="383.5,586.75 383.5,600.75" fill="none" stroke="#d5b567" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="383.5,609.5 383.5,620.0" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="383.50,620.00 379.65,613.00 387.35,613.00" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="383.5,641.0 383.5,651.5" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="383.50,651.50 379.65,644.50 387.35,644.50" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="383.5,672.5 383.5,683.0" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="383.50,683.00 379.65,676.00 387.35,676.00" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="395.5,593.75 413.5,593.75" fill="none" stroke="#8b6747" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="404.5,586.75 404.5,600.75" fill="none" stroke="#d5b567" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="404.5,609.5 404.5,620.0" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="404.50,620.00 400.65,613.00 408.35,613.00" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="404.5,641.0 404.5,651.5" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="404.50,651.50 400.65,644.50 408.35,644.50" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="404.5,672.5 404.5,683.0" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="404.50,683.00 400.65,676.00 408.35,676.00" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="416.5,593.75 434.5,593.75" fill="none" stroke="#8b6747" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="425.5,586.75 425.5,600.75" fill="none" stroke="#d5b567" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="425.5,609.5 425.5,620.0" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="425.50,620.00 421.65,613.00 429.35,613.00" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="425.5,641.0 425.5,651.5" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="425.50,651.50 421.65,644.50 429.35,644.50" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="425.5,672.5 425.5,683.0" fill="none" stroke="#b27b49" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="425.50,683.00 421.65,676.00 429.35,676.00" fill="#b27b49" stroke="none" stroke-width="1"/>
+<polyline points="373.0,704.0 378.25,704.0" fill="none" stroke="#658e99" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="383.5,704.0 388.75,704.0" fill="none" stroke="#658e99" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="394.0,704.0 399.25,704.0" fill="none" stroke="#658e99" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="404.5,704.0 409.75,704.0" fill="none" stroke="#658e99" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="415.0,704.0 420.25,704.0" fill="none" stroke="#658e99" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="425.5,704.0 430.75,704.0" fill="none" stroke="#658e99" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="365.12" y="651.5" width="15.759999999999991" height="21.0" rx="0" fill="#77583e" stroke="#d6b577" stroke-width="2"/>
+<rect x="428.12" y="620.0" width="15.759999999999991" height="21.0" rx="0" fill="#77583e" stroke="#d6b577" stroke-width="2"/>
+<polygon points="604.00,515.00 667.00,546.50 667.00,483.50" fill="#d3a194" stroke="#b67462" stroke-width="2"/>
+<polygon points="667.00,494.00 604.00,525.50 604.00,483.50" fill="#a8bfc0" stroke="#74999e" stroke-width="2"/>
+<rect x="585.62" y="499.25" width="15.759999999999991" height="21.0" rx="0" fill="#5d7281" stroke="#dcc179" stroke-width="2"/>
+<ellipse cx="593.5" cy="509.75" rx="10.0" ry="5.0" fill="#f4e3c1" stroke="#c47867" stroke-width="2"/>
+<ellipse cx="593.5" cy="509.75" rx="3.0" ry="3.0" fill="#c47867" stroke="none" stroke-width="1"/>
+<rect x="669.62" y="483.5" width="15.759999999999991" height="21.0" rx="0" fill="#5d7281" stroke="#dcc179" stroke-width="2"/>
+<ellipse cx="677.5" cy="494.0" rx="10.0" ry="5.0" fill="#f4e3c1" stroke="#7e9e9d" stroke-width="2"/>
+<ellipse cx="677.5" cy="494.0" rx="3.0" ry="3.0" fill="#7e9e9d" stroke="none" stroke-width="1"/>
+<rect x="604.0" y="530.75" width="10.5" height="10.5" rx="0" fill="#70553e" stroke="#d4b26c" stroke-width="2"/>
+<rect x="651.25" y="499.25" width="10.5" height="10.5" rx="0" fill="#70553e" stroke="#d4b26c" stroke-width="2"/>
+<rect x="583.0" y="528.12" width="21.0" height="15.759999999999991" rx="0" fill="#91b8a7" stroke="#d8e7d8" stroke-width="2"/>
+<rect x="667.0" y="496.62" width="21.0" height="15.759999999999991" rx="0" fill="#91b8a7" stroke="#d8e7d8" stroke-width="2"/>
 <polyline points="520.0,1208.0 446.5,1208.0" fill="none" stroke="#b18a36" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
 <polygon points="446.50,1208.00 455.50,1203.05 455.50,1212.95" fill="#b18a36" stroke="none" stroke-width="1"/>
 <polyline points="404.5,1155.5 404.5,1139.75" fill="none" stroke="#b18a36" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
@@ -257,19 +314,19 @@
 <polygon points="520.00,399.50 524.95,408.50 515.05,408.50" fill="#b18a36" stroke="none" stroke-width="1"/>
 <ellipse cx="241.75" cy="1064.25" rx="22.0" ry="22.0" fill="#243b4c" stroke="#d8b36a" stroke-width="2"/>
 <text x="234.26" y="1067.93" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="27" fill="#ffefc9">1</text>
-<text x="198.82" y="1110.73" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#ffedc4">회전 방패</text>
+<text x="186.24" y="1110.73" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#ffedc4">랜덤 창 바닥</text>
 <text x="214.86" y="1141.37" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="18" fill="#cfddd9">H +0m</text>
 <ellipse cx="793.0" cy="849.0" rx="22.0" ry="22.0" fill="#243b4c" stroke="#d8b36a" stroke-width="2"/>
 <text x="785.51" y="852.68" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="27" fill="#ffefc9">2</text>
-<text x="750.07" y="895.48" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#ffedc4">갑옷 수레</text>
+<text x="762.65" y="895.48" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#ffedc4">듀라한</text>
 <text x="766.11" y="926.12" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="18" fill="#cfddd9">H +3m</text>
 <ellipse cx="241.75" cy="639.0" rx="22.0" ry="22.0" fill="#243b4c" stroke="#d8b36a" stroke-width="2"/>
 <text x="234.26" y="642.68" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="27" fill="#ffefc9">3</text>
-<text x="198.82" y="685.48" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#ffedc4">낙하 투구</text>
+<text x="188.70" y="685.48" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#ffedc4">방패 사격장</text>
 <text x="214.86" y="716.12" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="18" fill="#cfddd9">H +6m</text>
 <ellipse cx="793.0" cy="492.0" rx="22.0" ry="22.0" fill="#243b4c" stroke="#d8b36a" stroke-width="2"/>
 <text x="785.51" y="495.68" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="27" fill="#ffefc9">4</text>
-<text x="739.95" y="538.48" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#ffedc4">나이트 돌진</text>
+<text x="750.07" y="538.48" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#ffedc4">감시 회랑</text>
 <text x="766.11" y="569.12" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="18" fill="#cfddd9">H +6m</text>
 <rect x="480.1" y="336.5" width="6.2999999999999545" height="15.75" rx="0" fill="#d4ac62" stroke="none" stroke-width="1"/>
 <rect x="553.6" y="336.5" width="6.2999999999999545" height="15.75" rx="0" fill="#d4ac62" stroke="none" stroke-width="1"/>
@@ -291,47 +348,48 @@
 <text x="376.00" y="1397.64" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="21" fill="#263645">CP / 대기 단</text>
 <rect x="605" y="1384" width="25" height="25" rx="0" fill="#d2a28e" stroke="#80918e" stroke-width="1"/>
 <text x="641.00" y="1397.64" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="21" fill="#263645">위험 범위</text>
+<text x="100.00" y="1425.12" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="18" fill="#63776b">창: 녹색 안전 / 황색 예고 / 적색 상승 (예시)</text>
 <rect x="1120" y="235" width="1066" height="218" rx="14" fill="#faf7ef" stroke="#d0c4af" stroke-width="2"/>
-<rect x="1120" y="235" width="9" height="218" rx="4" fill="#d09a57" stroke="none" stroke-width="1"/>
+<rect x="1120" y="235" width="9" height="218" rx="4" fill="#b77969" stroke="none" stroke-width="1"/>
 <ellipse cx="1168.0" cy="283.0" rx="24.0" ry="24.0" fill="#263e4e" stroke="none" stroke-width="1"/>
 <text x="1159.95" y="281.36" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="29" fill="#f8e5b9">1</text>
-<text x="1209.00" y="282.04" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="31" fill="#263645">회전 방패 선반</text>
-<text x="1209.00" y="322.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#94703e">2개 장치 · 약 40~50초</text>
-<text x="1150.00" y="366.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 큰 왕실 방패가 선반 폭을 쓸어내림</text>
-<text x="1150.00" y="398.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 첫 방패로 학습 → 두 번째는 반대 위상</text>
-<text x="1150.00" y="430.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 안전 홈에서 기다리거나 서로 밀며 통과</text>
+<text x="1209.00" y="282.04" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="31" fill="#263645">랜덤 창 바닥</text>
+<text x="1209.00" y="322.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#94703e">예고를 보고 안전 칸으로 · 약 45~55초</text>
+<text x="1150.00" y="366.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 바닥에 예고가 뜬 뒤 창이 올라오는 구간</text>
+<text x="1150.00" y="398.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 현재 칸→다음 칸으로 도달 가능한 안전길 보장</text>
+<text x="1150.00" y="430.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 초반은 넓은 띠, 후반은 꺾이는 경로</text>
 <rect x="1120" y="477" width="1066" height="218" rx="14" fill="#faf7ef" stroke="#d0c4af" stroke-width="2"/>
-<rect x="1120" y="477" width="9" height="218" rx="4" fill="#7292a0" stroke="none" stroke-width="1"/>
+<rect x="1120" y="477" width="9" height="218" rx="4" fill="#94765c" stroke="none" stroke-width="1"/>
 <ellipse cx="1168.0" cy="525.0" rx="24.0" ry="24.0" fill="#263e4e" stroke="none" stroke-width="1"/>
 <text x="1159.95" y="523.36" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="29" fill="#f8e5b9">2</text>
-<text x="1209.00" y="524.04" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="31" fill="#263645">갑옷 수레 통로</text>
-<text x="1209.00" y="564.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#94703e">3개 장치 · 약 55~65초</text>
-<text x="1150.00" y="608.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 수레가 옆으로 빠진 틈에 다음 대기 칸으로</text>
-<text x="1150.00" y="640.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 높은 수레를 뛰어넘는 해법은 제외</text>
-<text x="1150.00" y="672.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 장치 사이 8m 안전 여유 · 엇박자 3회</text>
+<text x="1209.00" y="524.04" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="31" fill="#263645">듀라한 내려찍기</text>
+<text x="1209.00" y="564.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#94703e">대검 / 도끼의 공격 범위 구분 · 약 55~65초</text>
+<text x="1150.00" y="608.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 대검은 길게, 도끼는 넓게 내려찍음</text>
+<text x="1150.00" y="640.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 무기 자세와 바닥 그림자로 공격 예고</text>
+<text x="1150.00" y="672.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 무기가 바닥에 박힌 뒤 회수할 때 전진</text>
 <rect x="1120" y="719" width="1066" height="218" rx="14" fill="#faf7ef" stroke="#d0c4af" stroke-width="2"/>
-<rect x="1120" y="719" width="9" height="218" rx="4" fill="#c08359" stroke="none" stroke-width="1"/>
+<rect x="1120" y="719" width="9" height="218" rx="4" fill="#6a90a0" stroke="none" stroke-width="1"/>
 <ellipse cx="1168.0" cy="767.0" rx="24.0" ry="24.0" fill="#263e4e" stroke="none" stroke-width="1"/>
 <text x="1159.95" y="765.36" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="29" fill="#f8e5b9">3</text>
-<text x="1209.00" y="766.04" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="31" fill="#263645">낙하 투구 진열대</text>
-<text x="1209.00" y="806.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#94703e">2개 장치 · 약 55~65초</text>
-<text x="1150.00" y="850.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 바닥 예고 원 → 거대 투구 낙하 → 충격파</text>
-<text x="1150.00" y="882.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 무구 상자 엄폐와 짧은 전진을 반복</text>
-<text x="1150.00" y="914.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 다른 팀을 밀어낼 수 있지만 엄폐도 공유</text>
+<text x="1209.00" y="766.04" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="31" fill="#263645">휴대 방패 석궁 사격장</text>
+<text x="1209.00" y="806.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#94703e">들고 이동하는 엄폐물 · 약 60~70초</text>
+<text x="1150.00" y="850.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 진입 보급대에서 방패를 잡아 화살을 막기</text>
+<text x="1150.00" y="882.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 혼자도 통과 가능 · 방패 뒤로 팀원이 동행</text>
+<text x="1150.00" y="914.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 방패 분실 시 재보급, 화살은 사격 구역 한정</text>
 <rect x="1120" y="961" width="1066" height="218" rx="14" fill="#faf7ef" stroke="#d0c4af" stroke-width="2"/>
-<rect x="1120" y="961" width="9" height="218" rx="4" fill="#8e776e" stroke="none" stroke-width="1"/>
+<rect x="1120" y="961" width="9" height="218" rx="4" fill="#8c777d" stroke="none" stroke-width="1"/>
 <ellipse cx="1168.0" cy="1009.0" rx="24.0" ry="24.0" fill="#263e4e" stroke="none" stroke-width="1"/>
 <text x="1159.95" y="1007.36" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="29" fill="#f8e5b9">4</text>
-<text x="1209.00" y="1008.04" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="31" fill="#263645">나이트 훈련 레일</text>
-<text x="1209.00" y="1048.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#94703e">1개 장치 · 약 60~70초</text>
-<text x="1150.00" y="1092.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 고정 8m 직선 돌진 · 플레이어 추적 없음</text>
-<text x="1150.00" y="1124.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 예고를 보고 옆 안전 홈에서 진입 타이밍 선택</text>
-<text x="1150.00" y="1156.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 돌진은 출구 반대 방향 · 마지막은 안전 정리</text>
+<text x="1209.00" y="1008.04" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="31" fill="#263645">갑옷 감시 회랑</text>
+<text x="1209.00" y="1048.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#94703e">시선 안에서는 정지 · 약 55~65초</text>
+<text x="1150.00" y="1092.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 진열 갑옷이 고개를 돌릴 때 다음 엄폐로</text>
+<text x="1150.00" y="1124.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 눈이 켜진 시선 안에서 직접 움직이면 발각</text>
+<text x="1150.00" y="1156.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#465854">• 상대의 밀치기·넉백으로 움직인 것은 제외</text>
 <rect x="1120" y="1222" width="1066" height="213" rx="14" fill="#253e4c" stroke="none" stroke-width="1"/>
-<text x="1148.00" y="1266.88" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="32" fill="#f9df9f">시간 예산  약 4분 17초</text>
-<text x="1148.00" y="1318.16" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="24" fill="#e3e9e2">이동 137초 + 장치 대응 60초 + 재시도 45초</text>
+<text x="1148.00" y="1266.88" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="32" fill="#f9df9f">시간 예산  약 4분 29초</text>
+<text x="1148.00" y="1318.16" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="24" fill="#e3e9e2">이동 137초 + 장치 대응 72초 + 재시도 45초</text>
 <text x="1148.00" y="1357.32" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="23" fill="#ccdcd5">+ 출구 읽기 15초  /  걷기 평균 2.5m/s 가정</text>
 <text x="1148.00" y="1397.64" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="21" fill="#c4d8d1">관문 잠금으로 시간을 채우지 않음 · 실측 후 조정</text>
-<text x="62.00" y="1491.84" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="26" fill="#263645">참고 이미지의 무구실 분위기 + 첨부 2-3 원안을 4종으로 재구성한 레벨디자인 약도</text>
-<text x="62.00" y="1534.48" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#6c756c">CP는 장치 바로 앞 · 경사로는 고정 건축 · 높이 H는 입구 기준 · 시간/치수는 블록아웃 초안, Unity 미구현</text>
+<text x="62.00" y="1491.84" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="26" fill="#263645">새 무구실 v2 · 창 바닥 / 듀라한 / 방패 사격장 / 감시 회랑</text>
+<text x="62.00" y="1534.48" font-family="Noto Sans CJK KR,Noto Sans CJK SC,sans-serif" font-size="22" fill="#6c756c">CP는 위험 구역 밖 · 창/시선 색은 한 패턴의 예시 · 시간과 치수는 실측 전 · Unity 미구현</text>
 </svg>
