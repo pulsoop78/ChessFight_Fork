@@ -382,7 +382,7 @@ class LegacyBuilder:
         self.d.script(self.root,'PhysicsProfile',kit.fields(physicsRate=120,solverIterations=24))
         self.d.script(self.root,'GiantChessCourse',kit.fields(
             pawnPrefab='{fileID: 7684884123511159585, guid: fe69acb7e49fea745aa289c4d39f3e62, type: 3}',
-            tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=15,replaySpeed=5,
+            tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=14,replaySpeed=5,
             moveSeconds=3,warningSeconds=5,restSeconds=2,knockbackSpeed=12,upwardSpeed=9,botsEnabled=1,boardPreview=kit.ref(self.preview['go']),chessSpawnDepth=4))
         self.d.script(self.root,'GiantChessApproach',kit.fields(course=kit.ref(self.source_module[0]),chessEntry=kit.ref(self.chessEntry['tr']))+
             '  transitionRoute:\n'+''.join('  - '+kit.ref(p['tr'])+'\n' for p in self.transitions))
@@ -628,7 +628,7 @@ class Builder(LegacyBuilder):
             self.box(g,'Square '+str(sq),(sq%8-3.5,4+sq//8-3.5,-.3),(.98,.98,.08),'White' if (sq%8+sq//8)%2 else 'Slate',False)
         self.d.script(g,'WarRoomScoreLabel',kit.fields(previewFraction=fraction))
     def fit_chess_room(self):
-        ratio=15/16
+        ratio=14/16
         for obj in self.d.all:
             if obj is self.root or obj is self.hq:continue
             parent=obj.get('parent');x,y,z=obj['pos']
@@ -687,7 +687,7 @@ class Builder(LegacyBuilder):
         def arr(name,objs):return '  '+name+':\n'+''.join('  - '+kit.ref(o['tr'])+'\n' for o in objs)
         module=self.d.script(self.root,'CourseModule',kit.fields(courseId='"3-1-HQ"',displayName='"왕의 서재와 거대 체스판"',entry=kit.ref(entry['tr']),exit=kit.ref(self.exit['tr']),minigameSlot=kit.ref(self.hq['tr']),targetSeconds=150,laneWidth=18)+arr('checkpoints',cps)+arr('route',route)+'  placementBounds:\n    m_Center: {x: 0, y: 20, z: 10}\n    m_Extent: {x: 162, y: 50, z: 162}\n')
         self.c.context(self.root);self.d.script(self.root,'PhysicsProfile',kit.fields(physicsRate=120,solverIterations=24))
-        self.d.script(self.root,'GiantChessCourse',kit.fields(pawnPrefab='{fileID: 7684884123511159585, guid: fe69acb7e49fea745aa289c4d39f3e62, type: 3}',tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=15,replaySpeed=5,moveSeconds=3,warningSeconds=5,restSeconds=2,knockbackSpeed=12,upwardSpeed=9,botsEnabled=1,boardPreview=kit.ref(self.preview['go']),chessSpawnDepth=4))
+        self.d.script(self.root,'GiantChessCourse',kit.fields(pawnPrefab='{fileID: 7684884123511159585, guid: fe69acb7e49fea745aa289c4d39f3e62, type: 3}',tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=14,replaySpeed=5,moveSeconds=3,warningSeconds=5,restSeconds=2,knockbackSpeed=12,upwardSpeed=9,botsEnabled=1,boardPreview=kit.ref(self.preview['go']),chessSpawnDepth=4))
         self.d.script(self.root,'GiantChessApproach',kit.fields(course=kit.ref(module),chessEntry=kit.ref(end['tr']))+'  transitionRoute: []\n')
         self.fit_chess_room()
         text,ids=stabilize(clean(self.d.render(scene=False)));self.serialized_root=ids[self.root['tr']]

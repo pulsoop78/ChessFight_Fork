@@ -14,7 +14,7 @@ class StraightWarRoom(unittest.TestCase):
         self.assertTrue(all(a[2]<=b[2] for a,b in zip(route,route[1:])))
         self.assertEqual(route[0],(0,0,-142));self.assertEqual(route[-1],(0,0,-4))
         for p in t.route(b,'checkpoints'):self.assertIn(p,route)
-        self.assertEqual(transform(t.data,number(f['exit'])),(0,0,169*15/16))
+        self.assertEqual(transform(t.data,number(f['exit'])),(0,0,169*14/16))
         self.assertEqual(vector(f['m_Center']) if 'm_Center' in f else (0,20,10),(0,20,10))
     def test_books_replace_maps_and_return_to_previous_table(self):
         t=self.t;books=t.scripts_of('ClosingBook');self.assertEqual(len(books),2)
@@ -94,10 +94,10 @@ class StraightWarRoom(unittest.TestCase):
             areas.append((p[0]-size[0]/2,p[0]+size[0]/2))
         self.assertEqual(sorted(areas),[(-9,0),(0,9)])
         _,game,_=t.scripts_of('GiantChessCourse')[0]
-        self.assertEqual(float(game['tileSize']),15)
+        self.assertEqual(float(game['tileSize']),14)
         preview=number(game['boardPreview']);tid=t.owners[preview]
-        self.assertEqual(transform(t.data,tid,(-64,0,128)),(-60,0,120))
+        self.assertEqual(transform(t.data,tid,(-64,0,128)),(-56,0,112))
         sides=[(lo,hi) for name,lo,hi,_ in t.boxes if name=='HQ side wall']
-        self.assertAlmostEqual(max(hi[0] for lo,hi in sides),125*15/16)
+        self.assertAlmostEqual(max(hi[0] for lo,hi in sides),125*14/16)
         pages=[(lo,hi) for name,lo,hi,_ in t.boxes if name=='Walkable book pages']
         self.assertTrue(all(abs(hi[1])<.001 and abs(lo[1]+1.2)<.001 for lo,hi in pages))
