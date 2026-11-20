@@ -100,12 +100,18 @@ namespace ChessFight.ProtectKing
                 {var line=aimLines[e];line.position=(a+b)*.5f;line.rotation=Quaternion.LookRotation(direction);line.localScale=new Vector3(.06f,.06f,Vector3.Distance(a,b));}
             }
         }
+        bool FiresInVolley(int emitter, long volley)
+        {
+            // Authored batteries contain three bows; small fixtures still fire together.
+            int groups = (emitters.Length + 2) / 3;
+            return emitter / 3 == (int)(volley % groups);
+        }
         void FireVolley()
         {
             for(int e=0;e<emitters.Length;e++)
             {
                 var source=emitters[e];
-                if(emitters.Length==6 && e/3!=(int)(aimedVolley%2))continue;
+                if(!FiresInVolley(e, aimedVolley))continue;
                 if (source == null) continue;
                 Vector3 direction = aimedDirections[e].sqrMagnitude>.01f?aimedDirections[e]:source.forward.normalized;
                 if (!ClipSegment(zone, source.position, source.position + direction * 200, out var entry, out var exit)) continue;
@@ -162,7 +168,7 @@ namespace ChessFight.ProtectKing
             long volley = (long)Math.Floor(now / period); float age = (float)(now - volley * period);
             Warning = age < warning;
             if(aimedVolley!=volley)Aim(volley);
-            if(aimLines!=null)for(int e=0;e<aimLines.Length;e++)if(aimLines[e]!=null)aimLines[e].gameObject.SetActive(Warning && (emitters.Length!=6 || e/3==(int)(volley%2)));
+            if(aimLines!=null)for(int e=0;e<aimLines.Length;e++)if(aimLines[e]!=null)aimLines[e].gameObject.SetActive(Warning && FiresInVolley(e, volley));
             if (age >= warning && lastVolley != volley) { lastVolley = volley; FireVolley(); }
             for (int i = 0; i < live.Length; i++)
             {
@@ -170,7 +176,7 @@ namespace ChessFight.ProtectKing
                 projectileVisuals[i].position = positions[i]; projectileVisuals[i].gameObject.SetActive(live[i]);
             }
             tint.Clear(); ChessFight.Game.LitMaterials.SetColor(tint, Warning ? Color.white * (.7f + .3f * Mathf.Sin(age * 20)) : Color.gray);
-            for(int e=0;e<bows.Length;e++)foreach(var bow in bows[e])if(bow!=null)bow.SetPropertyBlock(emitters.Length!=6 || e/3==(int)(volley%2)?tint:null);
+            for(int e=0;e<bows.Length;e++)foreach(var bow in bows[e])if(bow!=null)bow.SetPropertyBlock(FiresInVolley(e, volley)?tint:null);
         }
         void OnDisable()
         {

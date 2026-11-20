@@ -3,7 +3,7 @@ using UnityEngine;using ChessFight.ProtectKing;
 namespace UnityEngine {
  public class SerializeField:Attribute{}public class TooltipAttribute:Attribute{public TooltipAttribute(string s){}}public class MinAttribute:Attribute{public MinAttribute(float f){}}public class RequireComponent:Attribute{public RequireComponent(Type t){}}
  public class MonoBehaviour {public bool enabled=true;public Transform transform=new Transform();public Collider[] testColliders=new Collider[0];public T GetComponent<T>() where T:class=>null;public T[] GetComponentsInChildren<T>() where T:class{if(typeof(T)==typeof(Collider))return testColliders as T[];return new T[0];}}
- public class GameObject {public bool active;public void SetActive(bool v){active=v;}}
+ public class GameObject {public bool active;public bool activeInHierarchy=true;public void SetActive(bool v){active=v;}}
  public class Transform {public Vector3 localScale;public Vector3 position;public Quaternion rotation;public Transform parent;public GameObject gameObject=new GameObject();public Vector3 forward=>rotation.Rotate(Vector3.forward);public Vector3 TransformPoint(Vector3 p)=>position+rotation.Rotate(p);public Vector3 InverseTransformPoint(Vector3 p)=>Quaternion.Euler(0,-rotation.yaw,0).Rotate(p-position);public bool IsChildOf(Transform p)=>this==p||(parent!=null&&parent.IsChildOf(p));public T[] GetComponentsInChildren<T>()=>new T[0];}
  public struct Vector3 {public float x,y,z;public Vector3(float a,float b,float c){x=a;y=b;z=c;}public static Vector3 zero=>new Vector3();public static Vector3 forward=>new Vector3(0,0,1);public static Vector3 up=>new Vector3(0,1,0);public float magnitude=>(float)Math.Sqrt(sqrMagnitude);public float sqrMagnitude=>x*x+y*y+z*z;public Vector3 normalized=>magnitude>.00001f?this*(1/magnitude):zero;public static Vector3 operator+(Vector3 a,Vector3 b)=>new Vector3(a.x+b.x,a.y+b.y,a.z+b.z);public static Vector3 operator-(Vector3 a,Vector3 b)=>new Vector3(a.x-b.x,a.y-b.y,a.z-b.z);public static Vector3 operator*(Vector3 a,float f)=>new Vector3(a.x*f,a.y*f,a.z*f);public static Vector3 Scale(Vector3 a,Vector3 b)=>new Vector3(a.x*b.x,a.y*b.y,a.z*b.z);public static float Distance(Vector3 a,Vector3 b)=>(a-b).magnitude;public static Vector3 Lerp(Vector3 a,Vector3 b,float t)=>a+(b-a)*Math.Max(0,Math.Min(1,t));}
  public struct Quaternion {public static Quaternion identity=>default(Quaternion);public float yaw;public static Quaternion Euler(float x,float y,float z)=>new Quaternion{yaw=y};public static Quaternion LookRotation(Vector3 d)=>new Quaternion{yaw=(float)(Math.Atan2(d.x,d.z)*180/Math.PI)};public Vector3 Rotate(Vector3 p){double a=yaw*Math.PI/180;return new Vector3((float)(p.x*Math.Cos(a)+p.z*Math.Sin(a)),p.y,(float)(-p.x*Math.Sin(a)+p.z*Math.Cos(a)));}}
@@ -13,12 +13,12 @@ namespace UnityEngine {
  public class Collider {public bool enabled=true;public Transform transform=new Transform();public Rigidbody attachedRigidbody;public ImportedObstacleActor actor;}
  public class BoxCollider:Collider {public Bounds bounds=>new Bounds{center=transform.TransformPoint(center),extents=size*.5f};public Vector3 size,center;}
  public class Joint {public Rigidbody connectedBody;}
- public enum RigidbodyInterpolation{Interpolate}public enum CollisionDetectionMode{ContinuousDynamic} [Flags]public enum RigidbodyConstraints{FreezeRotationX=1,FreezeRotationZ=2}
- public class Rigidbody {public Vector3 position,linearVelocity,angularVelocity;public Quaternion rotation;public bool isKinematic,useGravity;public float mass;public RigidbodyInterpolation interpolation;public CollisionDetectionMode collisionDetectionMode;public RigidbodyConstraints constraints;public List<Joint> joints=new List<Joint>();public void GetComponents(List<Joint> target){target.Clear();target.AddRange(joints);}}
+ public enum RigidbodyInterpolation{Interpolate}public enum CollisionDetectionMode{ContinuousDynamic,ContinuousSpeculative} [Flags]public enum RigidbodyConstraints{FreezeRotationX=1,FreezeRotationZ=2}
+ public class Rigidbody {public Vector3 position,linearVelocity,angularVelocity;public Quaternion rotation;public bool isKinematic,useGravity;public float mass;public RigidbodyInterpolation interpolation;public CollisionDetectionMode collisionDetectionMode;public RigidbodyConstraints constraints;public List<Joint> joints=new List<Joint>();public void MovePosition(Vector3 p){position=p;}public void MoveRotation(Quaternion q){rotation=q;}public void GetComponents(List<Joint> target){target.Clear();target.AddRange(joints);}}
  public struct Bounds {public Vector3 center,extents;}
  public struct RaycastHit {public Collider collider;public float distance;}
  public enum QueryTriggerInteraction {Ignore}
- public static class Physics {public static Collider[] overlaps=new Collider[0];public static Func<Vector3,Vector3,float,RaycastHit[]> ray;public static int RaycastNonAlloc(Vector3 p,Vector3 d,RaycastHit[] target,float length,int mask,QueryTriggerInteraction q){var found=ray==null?new RaycastHit[0]:ray(p,d,length);int n=Math.Min(found.Length,target.Length);Array.Copy(found,target,n);return n;}public static int OverlapBoxNonAlloc(Vector3 p,Vector3 h,Collider[] t,Quaternion r,int m,QueryTriggerInteraction q){int n=Math.Min(overlaps.Length,t.Length);Array.Copy(overlaps,t,n);return n;}public static int OverlapSphereNonAlloc(Vector3 p,float r,Collider[] target,int mask,QueryTriggerInteraction q){int n=Math.Min(overlaps.Length,target.Length);Array.Copy(overlaps,target,n);return n;}}
+ public static class Physics {public static int ignored;public static void IgnoreCollision(Collider a,Collider b,bool ignore){ignored+=ignore?1:-1;}public static Collider[] overlaps=new Collider[0];public static Func<Vector3,Vector3,float,RaycastHit[]> ray;public static int RaycastNonAlloc(Vector3 p,Vector3 d,RaycastHit[] target,float length,int mask,QueryTriggerInteraction q){var found=ray==null?new RaycastHit[0]:ray(p,d,length);int n=Math.Min(found.Length,target.Length);Array.Copy(found,target,n);return n;}public static int OverlapBoxNonAlloc(Vector3 p,Vector3 h,Collider[] t,Quaternion r,int m,QueryTriggerInteraction q){int n=Math.Min(overlaps.Length,t.Length);Array.Copy(overlaps,t,n);return n;}public static int OverlapSphereNonAlloc(Vector3 p,float r,Collider[] target,int mask,QueryTriggerInteraction q){int n=Math.Min(overlaps.Length,target.Length);Array.Copy(overlaps,target,n);return n;}}
  public static class Mathf{public static float Max(float a,float b)=>Math.Max(a,b);public static float Min(float a,float b)=>Math.Min(a,b);public static float Abs(float n)=>Math.Abs(n);public static float Sin(float n)=>(float)Math.Sin(n);}
  public static class Time {public static float fixedDeltaTime=.02f;}
  public static class Debug {public static void LogError(string s,object o){throw new Exception(s);}}
@@ -54,15 +54,29 @@ class Harness {
   hand.joints.Clear();context.Now=3.6;Call(shield,"FixedUpdate");Near(body.position.x,58,"Joint-free shield returns to capped supply");Check(solid.enabled&&!shield.Returning,"Shield collision restored after recovery");
   hand.joints.Add(new Joint{connectedBody=body});context.Now=4;Call(shield,"FixedUpdate");context.Now=40;Call(shield,"FixedUpdate");context.Now=44;Call(shield,"FixedUpdate");Check(shield.Returning,"Holding inside supply cannot deny it forever");
   Physics.ray=null;Physics.overlaps=new[]{pawnCollider};actor.Position=new Vector3(58,6,118);
-  var aimContext=new ArmoryCourseContext();var aimed=new ArmoryCrossbowGallery();var sides=new Transform[6];var lines=new Transform[6];var arrows=new Transform[18];
-  for(int i=0;i<6;i++){sides[i]=new Transform{position=new Vector3(i<3?50:66,7.5f,112+i%3*6),rotation=Quaternion.Euler(0,i<3?90:-90,0)};lines[i]=new Transform();}
-  for(int i=0;i<18;i++)arrows[i]=new Transform();
+  var aimContext=new ArmoryCourseContext();var aimed=new ArmoryCrossbowGallery();var sides=new Transform[9];var lines=new Transform[9];var arrows=new Transform[27];
+  for(int i=0;i<9;i++){sides[i]=new Transform{position=i<6?new Vector3(i<3?50:66,7.5f,112+i%3*6):new Vector3(54+(i-6)*4,7.5f,129),rotation=Quaternion.Euler(0,i<3?90:i<6?-90:180,0)};lines[i]=new Transform();}
+  for(int i=0;i<27;i++)arrows[i]=new Transform();
   Set(aimed,"context",aimContext);Set(aimed,"zone",zone);Set(aimed,"emitters",sides);Set(aimed,"aimLines",lines);Set(aimed,"projectileVisuals",arrows);Call(aimed,"Awake");Tick(aimed,aimContext,0);
   Check(lines[0].gameObject.active&&!lines[3].gameObject.active,"Only firing side announces");
   var locked=((Vector3[])aimed.GetType().GetField("aimedDirections",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(aimed))[0];
   actor.Position=new Vector3(60,6,120);Tick(aimed,aimContext,.5);
   var unchanged=((Vector3[])aimed.GetType().GetField("aimedDirections",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(aimed))[0];Near(locked.x,unchanged.x,"Warning locks aim, no homing");
   Tick(aimed,aimContext,2.9);Check(!lines[0].gameObject.active&&lines[3].gameObject.active,"Opposite side next volley");
+  Tick(aimed,aimContext,5.7);Check(!lines[0].gameObject.active&&!lines[3].gameObject.active&&lines[6].gameObject.active,"Front battery announces third volley");
+  Physics.ray=(p,d,length)=>new[]{new RaycastHit{collider=shieldCollider,distance=.1f}};
+  Tick(aimed,aimContext,6.7);Check(aimed.BlockedShots==3,"All three front bows fire straight and can be blocked");
+  Tick(aimed,aimContext,8.5);Check(lines[0].gameObject.active&&!lines[6].gameObject.active,"Three-side cycle repeats");
+  Physics.overlaps=new Collider[0];context.Now=45;Call(shield,"FixedUpdate");
+  var holder=new Transform{position=new Vector3(58,7,104)};var owner=new Collider();
+  Check(shield.TryEquip(holder,new[]{owner},Vector3.forward),"Free shield equips");
+  Check(shield.IsHeld&&shield.EquippedBy==holder&&body.isKinematic&&!body.useGravity&&Physics.ignored==1,"Equipped shield stays solid but ignores its owner");
+  Check(!shield.TryEquip(new Transform(),new[]{owner},Vector3.forward),"Cannot steal an equipped shield");
+  shield.SetFacing(new Vector3(1,3,0));context.Now=45.1;Call(shield,"FixedUpdate");Near(body.position.x,58.9f,"Mounted shield follows look direction");Near(body.position.y,7,"Aim pitch does not tilt shield");Near(body.rotation.yaw,90,"Shield rotates toward view");
+  shield.Drop();Check(!shield.IsHeld&&!body.isKinematic&&body.useGravity&&Physics.ignored==0,"E drop restores dynamics and owner collisions");
+  Check(shield.TryEquip(holder,new[]{owner},Vector3.forward),"Can equip again");shield.ResetShield();Check(shield.EquippedBy==null&&Physics.ignored==0,"Reset releases equipment without orphaned collision ignores");
+  context.Now=46;Call(shield,"FixedUpdate");Check(!shield.Returning&&solid.enabled,"Equipment reset finishes without waiting forever");
+  Check(shield.TryEquip(holder,new[]{owner},Vector3.forward),"Equip before carrier deactivation");holder.gameObject.activeInHierarchy=false;context.Now=46.1;Call(shield,"FixedUpdate");Check(shield.EquippedBy==null&&Physics.ignored==0,"Inactive carrier releases shield");
   Console.WriteLine("PASS: bounded and rotated projectile clip, nearest cover, pawn/CP/pause/reset rules, and held-shield-safe recovery");
  }
 }

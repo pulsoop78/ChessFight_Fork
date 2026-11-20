@@ -160,20 +160,20 @@ class Builder:
         zone=self.d.box(group,(12,5,20),(0,2.5,10),True)
         allowed=self.d.box(group,(26,18,33),(0,3,7.5),True)
         for i,x in enumerate((-4,0,4)):
-            spawn=self.group('Shield supply spawn '+str(i),group,(x,1.5,-4))
-            shield=self.group('Carry shield '+str(i),group,(x,1.5,-4))
+            spawn=self.group('Shield supply spawn '+str(i),group,(x,1.1,-4))
+            shield=self.group('Carry shield '+str(i),group,(x,1.1,-4))
             rb=self.d.rigidbody(shield,False,2)
-            self.box(shield,'Shield plate',(0,0,0),(2.8,3,.25),'ArmoryTrialLightGray',True)
-            self.box(shield,'Shield grip',(0,0,-.25),(.4,1,.3),'ArmoryTrialDarkGray',False)
+            self.box(shield,'Shield plate',(0,0,0),(1.8,2.1,.2),'ArmoryTrialLightGray',True)
+            self.box(shield,'Shield grip',(0,0,-.2),(.3,.7,.25),'ArmoryTrialDarkGray',False)
             self.d.script(shield,'ArmoryCarryShield',kit.fields(context=kit.ref(self.context),body=kit.ref(rb),spawnPoint=kit.ref(spawn['tr']),allowedArea=kit.ref(allowed),recoverySeconds=3,abandonedSeconds=12,lostBelowSpawn=8))
         emitters=[];projectiles=[]
         aim_lines=[]
-        for i,(side,z) in enumerate(((-1,4),(-1,10),(-1,16),(1,4),(1,10),(1,16))):
-            emitter=self.group('Crossbow emitter '+str(i),group,(side*8,1.5,z),kit.yaw(90 if side<0 else -90));emitters.append(emitter['tr'])
+        for i,(x,z,yaw) in enumerate(((-8,4,90),(-8,10,90),(-8,16,90),(8,4,-90),(8,10,-90),(8,16,-90),(-4,21,180),(0,21,180),(4,21,180))):
+            emitter=self.group('Crossbow emitter '+str(i),group,(x,1.5,z),kit.yaw(yaw));emitters.append(emitter['tr'])
             self.box(emitter,'Crossbow bow',(0,0,0),(2,.3,.3),'ArmoryTrialDarkGray',False)
             self.box(emitter,'Crossbow stock',(0,0,.5),(.35,.35,1.4),'ArmoryTrialLightGray',False)
             aim_lines.append(self.box(group,'Aim warning line '+str(i),(0,-50,0),(.06,.06,1),'ArmoryTrialLightGray',False)['tr'])
-        for i in range(18):
+        for i in range(27):
             visual=self.box(group,'Pooled arrow '+str(i),(0,-50,0),(.1,.1,1),'ArmoryTrialDarkGray',False)
             projectiles.append(visual['tr'])
         for x,z in ((-6,8),(6,14)):

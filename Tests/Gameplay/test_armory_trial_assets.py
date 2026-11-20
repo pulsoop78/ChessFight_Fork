@@ -46,13 +46,22 @@ class ArmoryTrialAssets(unittest.TestCase):
         self.assertEqual(len(self.scripts('ArmoryCrossbowGallery')),1)
         self.assertEqual(len(self.scripts('ArmoryWatcherGallery')),1)
         _,_,raw=self.scripts('ArmoryCrossbowGallery')[0]
-        self.assertEqual(len(self.refs(raw,'emitters')),6)
-        self.assertEqual(len(self.refs(raw,'projectileVisuals')),18)
+        self.assertEqual(len(self.refs(raw,'emitters')),9)
+        self.assertEqual(len(self.refs(raw,'projectileVisuals')),27)
         for k,f,b in self.scripts('ArmoryCarryShield'):
             self.assertNotEqual(number(f['body']),0);self.assertNotEqual(number(f['spawnPoint']),0)
             self.assertNotEqual(number(f['context']),0);self.assertNotEqual(number(f['allowedArea']),0)
         for cls in ('ArmorySpearFloor','ArmoryDullahan','ArmoryCrossbowGallery','ArmoryWatcherGallery'):
             for _,f,_ in self.scripts(cls):self.assertNotEqual(number(f['context']),0)
+    def test_front_battery_and_smaller_shields(self):
+        for i,x in enumerate((54,58,62),6):
+            self.assertEqual(self.position('Crossbow emitter '+str(i)),(x,7.5,129))
+            tid=self.transforms[self.go_by_name['Crossbow emitter '+str(i)]]
+            direction=rotate(vector(fields(self.data[str(tid)])['m_LocalRotation']),(0,0,1))
+            self.assertAlmostEqual(direction[2],-1)
+        plates=[fields(b) for b in self.data.values() if b.startswith('--- !u!4 ') and self.names[number(fields(b)['m_GameObject'])]=='Shield plate']
+        self.assertEqual(len(plates),3)
+        self.assertTrue(all(vector(f['m_LocalScale'])==(1.8,2.1,.2) for f in plates))
     def test_course_checkpoints_heights_and_route_length(self):
         _,f,b=self.scripts('CourseModule')[0]
         checkpoints=[transform(self.data,t) for t in self.refs(b,'checkpoints')]
