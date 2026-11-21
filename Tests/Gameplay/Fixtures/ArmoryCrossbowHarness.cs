@@ -58,15 +58,28 @@ class Harness {
   for(int i=0;i<9;i++){sides[i]=new Transform{position=i<6?new Vector3(i<3?50:66,7.5f,112+i%3*6):new Vector3(54+(i-6)*4,7.5f,129),rotation=Quaternion.Euler(0,i<3?90:i<6?-90:180,0)};lines[i]=new Transform();}
   for(int i=0;i<27;i++)arrows[i]=new Transform();
   Set(aimed,"context",aimContext);Set(aimed,"zone",zone);Set(aimed,"emitters",sides);Set(aimed,"aimLines",lines);Set(aimed,"projectileVisuals",arrows);Call(aimed,"Awake");Tick(aimed,aimContext,0);
-  Check(lines[0].gameObject.active&&!lines[3].gameObject.active,"Only firing side announces");
-  var locked=((Vector3[])aimed.GetType().GetField("aimedDirections",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(aimed))[0];
-  actor.Position=new Vector3(60,6,120);Tick(aimed,aimContext,.5);
-  var unchanged=((Vector3[])aimed.GetType().GetField("aimedDirections",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(aimed))[0];Near(locked.x,unchanged.x,"Warning locks aim, no homing");
-  Tick(aimed,aimContext,2.9);Check(!lines[0].gameObject.active&&lines[3].gameObject.active,"Opposite side next volley");
-  Tick(aimed,aimContext,5.7);Check(!lines[0].gameObject.active&&!lines[3].gameObject.active&&lines[6].gameObject.active,"Front battery announces third volley");
+  var firing=typeof(ArmoryCrossbowGallery).GetMethod("FiresInVolley",BindingFlags.NonPublic|BindingFlags.Instance);
+  Func<int,long,bool> fires=(e,v)=>(bool)firing.Invoke(aimed,new object[]{e,v});
+  var counts=new int[3];int previous=-1,repeats=0,frontVolley=-1,changedSeed=0;
+  for(int v=0;v<1000;v++)
+  {
+   Tick(aimed,aimContext,v*2.8+.1);int group=-1,active=0;
+   for(int e=0;e<9;e++)if(lines[e].gameObject.active){active++;if(group<0)group=e/3;Check(e/3==group,"One battery per warning");}
+   Check(active==3,"Exactly three warning lines");counts[group]++;if(previous==group)repeats++;previous=group;
+   if(group==2&&frontVolley<0)frontVolley=v;
+   Tick(aimed,aimContext,v*2.8+.5);
+   for(int e=0;e<9;e++)Check(lines[e].gameObject.active==(e/3==group)&&fires(e,v)==(e/3==group),"Selection stays fixed during warning");
+   Set(aimed,"seed",2);if(!fires(group*3,v))changedSeed++;Set(aimed,"seed",1);
+  }
+  Check(counts[0]>250&&counts[1]>250&&counts[2]>250,"All three sides remain eligible across volleys");
+  Check(repeats>200,"Consecutive repeats allowed instead of ordered alternation");Check(changedSeed>500,"New run changes random schedule");
+  aimContext.Now=frontVolley*2.8;aimed.ResetGallery();Tick(aimed,aimContext,frontVolley*2.8+.1);
+  var locked=((Vector3[])aimed.GetType().GetField("aimedDirections",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(aimed))[6];
+  actor.Position=new Vector3(60,6,120);Tick(aimed,aimContext,frontVolley*2.8+.5);
+  var unchanged=((Vector3[])aimed.GetType().GetField("aimedDirections",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(aimed))[6];Near(locked.x,unchanged.x,"Warning locks aim, no homing");
+  aimContext.Running=false;Tick(aimed,aimContext,frontVolley*2.8+.8);Check(aimed.BlockedShots==0,"Paused warning does not fire");aimContext.Running=true;
   Physics.ray=(p,d,length)=>new[]{new RaycastHit{collider=shieldCollider,distance=.1f}};
-  Tick(aimed,aimContext,6.7);Check(aimed.BlockedShots==3,"All three front bows fire straight and can be blocked");
-  Tick(aimed,aimContext,8.5);Check(lines[0].gameObject.active&&!lines[6].gameObject.active,"Three-side cycle repeats");
+  Tick(aimed,aimContext,frontVolley*2.8+1.1);Check(aimed.BlockedShots==3,"Random front battery fires the three announced bows and can be blocked");
   Physics.overlaps=new Collider[0];context.Now=45;Call(shield,"FixedUpdate");
   var holder=new Transform{position=new Vector3(58,7,104)};var owner=new Collider();
   Check(shield.TryEquip(holder,new[]{owner},Vector3.forward),"Free shield equips");

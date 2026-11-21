@@ -102,9 +102,17 @@ namespace ChessFight.ProtectKing
         }
         bool FiresInVolley(int emitter, long volley)
         {
-            // Authored batteries contain three bows; small fixtures still fire together.
+            // Mix the run seed and volley independently: repeats are allowed, with no side order.
+            // A pure selection keeps warning and firing consistent regardless of frame count.
             int groups = (emitters.Length + 2) / 3;
-            return emitter / 3 == (int)(volley % groups);
+            unchecked
+            {
+                ulong pick = (ulong)volley + ((ulong)(uint)seed << 32) + 0x9e3779b97f4a7c15UL;
+                pick = (pick ^ (pick >> 30)) * 0xbf58476d1ce4e5b9UL;
+                pick = (pick ^ (pick >> 27)) * 0x94d049bb133111ebUL;
+                pick ^= pick >> 31;
+                return emitter / 3 == (int)(pick % (ulong)groups);
+            }
         }
         void FireVolley()
         {
