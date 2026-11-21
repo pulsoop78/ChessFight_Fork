@@ -133,14 +133,38 @@ class Builder:
             self.box(g,'Shoulder '+str(side),(side*2,3.5,0),(1.4,1.2,1.7),solid=True,unclimb=True)
             self.box(g,'Leg '+str(side),(side*.8,1,0),(.7,1.8,.8),solid=True,unclimb=True)
         return g
+    def dullahan_armour(self,parent,pos,yaw):
+        g=self.group('Dullahan armour - no head',parent,pos,kit.yaw(yaw))
+        self.box(g,'Dullahan display plinth',(0,-.25,0),(5.8,.5,5.8),'ArmoryTrialDarkGray',True,unclimb=True)
+        self.box(g,'Dullahan waist',(0,4.8,0),(3.2,1.1,1.8),'ArmoryTrialDarkGray',True,unclimb=True)
+        self.box(g,'Dullahan breastplate',(0,6.7,0),(3.7,3,2),'ArmoryTrialLightGray',True,unclimb=True)
+        self.box(g,'Dullahan chest crest',(0,6.9,1.1),(1.2,1.7,.3),'ArmoryTrialGray',False)
+        self.box(g,'Dullahan back mantle',(0,6.1,-1.2),(4.2,4,.3),'ArmoryTrialDarkGray',False)
+        # Four rim segments leave a real hollow neck opening instead of a helmet.
+        for x,z,w,d in ((-.72,0,.28,1.6),(.72,0,.28,1.6),(0,-.72,1.2,.28),(0,.72,1.2,.28)):
+            self.box(g,'Dullahan open neck rim '+str(x)+' '+str(z),(x,8.45,z),(w,.45,d),'ArmoryTrialLightGray',False)
+        for side in (-1,1):
+            self.box(g,'Dullahan pauldron '+str(side),(side*2.35,7.6,0),(1.8,1.5,2.4),'ArmoryTrialGray',True,unclimb=True)
+            self.box(g,'Dullahan upper arm '+str(side),(side*2.3,6.3,.35),(1,1.9,1.1),'ArmoryTrialLightGray',False)
+            self.box(g,'Dullahan elbow '+str(side),(side*2.25,5.35,.65),(1.2,.8,1.3),'ArmoryTrialDarkGray',False)
+            self.box(g,'Dullahan forearm '+str(side),(side*2.2,4.55,1),(1.1,1.4,1.3),'ArmoryTrialLightGray',False)
+            self.box(g,'Dullahan gauntlet '+str(side),(side*2.1,3.75,1.35),(1.3,.8,1.4),'ArmoryTrialGray',False)
+            self.box(g,'Dullahan thigh plate '+str(side),(side*.95,3.65,0),(1.35,1.7,1.5),'ArmoryTrialLightGray',True,unclimb=True)
+            self.box(g,'Dullahan knee guard '+str(side),(side*1.05,2.65,.45),(1.6,.9,1.8),'ArmoryTrialGray',False)
+            self.box(g,'Dullahan shin plate '+str(side),(side*1.05,1.55,.05),(1.15,1.6,1.45),'ArmoryTrialLightGray',True,unclimb=True)
+            self.box(g,'Dullahan armoured boot '+str(side),(side*1.05,.4,.55),(1.55,.8,2.6),'ArmoryTrialDarkGray',True,unclimb=True)
+        return g
     def dullahans(self):
         for i,(z,x,axe) in enumerate(((74,91,False),(87,113,True))):
-            group=self.group(('02b Axe' if axe else '02a Sword')+' Dullahan',self.hazards,(102,3,z))
-            self.armour(group,'Dullahan armour - no head',(x-102,0,0))
+            group=self.group(('02b Axe' if axe else '02a Mace')+' Dullahan',self.hazards,(102,3,z))
+            self.dullahan_armour(group,(x-102,0,0),-90 if axe else 90)
             pivot=self.group('Weapon pivot - animated',group,(x-102,1.2,0))
-            self.box(pivot,'Weapon handle',(0,8 if axe else 1.5,0),(.35,16 if axe else 3,.35),'ArmoryTrialDarkGray',False)
+            self.box(pivot,'Weapon handle',(0,8,0),(.35,16,.35),'ArmoryTrialDarkGray',False)
             if axe:self.box(pivot,'Wide axe blade',(0,16,0),(3,3,.5),'ArmoryTrialLightGray',False)
-            else:self.box(pivot,'Long sword blade',(0,10,0),(.9,16,.25),'ArmoryTrialLightGray',False)
+            else:
+                self.box(pivot,'Flanged mace head',(0,16,0),(2.6,2.6,2.6),'ArmoryTrialGray',False,shape='Sphere')
+                self.box(pivot,'Mace flanges X',(0,16,0),(3,3,.35),'ArmoryTrialLightGray',False)
+                self.box(pivot,'Mace flanges Z',(0,16,0),(.35,3,3),'ArmoryTrialLightGray',False)
             self.box(pivot,'Weapon guard',(0,2,0),(2.2,.3,.5),'ArmoryTrialLightGray',False)
             area=self.d.box(group,(12,3,12 if axe else 3),(0,1.5,0),True)
             warning_parts=[]

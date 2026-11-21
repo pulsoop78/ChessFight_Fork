@@ -33,6 +33,7 @@ namespace ChessFight.ProtectKing
         long lastCycle = long.MinValue;
         int lastSeed = int.MinValue;
         double lastTime = -1;
+        bool impactResolved;
         public float Period => Mathf.Max(.1f, restSeconds) + Mathf.Max(.1f, windupSeconds) + Mathf.Max(.05f, strikeSeconds) + Mathf.Max(.1f, holdSeconds) + Mathf.Max(.1f, recoverySeconds);
         void Awake()
         {
@@ -69,19 +70,20 @@ namespace ChessFight.ProtectKing
             long cycle = (long)Math.Floor(time / Period);
             float t = (float)(time - cycle * Period);
             if (cycle != lastCycle || lastSeed != context.Seed || now < lastTime)
-            { struck.Clear(); lastCycle = cycle; lastSeed = context.Seed; }
+            { struck.Clear(); impactResolved = false; lastCycle = cycle; lastSeed = context.Seed; }
             lastTime = now;
             weaponPivot.localRotation = restRotation * Quaternion.Euler(0, 0, WeaponAngle(t));
             float begin = Mathf.Max(.1f, restSeconds) + Mathf.Max(.1f, windupSeconds);
             float impact = begin + Mathf.Max(.05f, strikeSeconds);
             bool warning = t >= Mathf.Max(.1f, restSeconds) && t < impact;
-            bool impacting = t >= impact && t < impact + Mathf.Max(.1f, holdSeconds);
-            // A bright, bounded hold footprint explicitly communicates the impact shock area.
-            float brightness = impacting ? .82f + .18f * Mathf.PingPong(t * 9, 1)
+            bool impacting = t >= impact && !impactResolved;
+            // Holding the landed weapon is safe: only its first landing tick applies a hit.
+            float brightness = t >= impact && t < impact + .08f ? .95f
                 : warning ? .7f + .3f * Mathf.PingPong(t * 3, 1) : .45f;
             tint.Clear(); LitMaterials.SetColor(tint, new Color(brightness, brightness, brightness, 1));
             SetWarningTint();
             if (!impacting) return;
+            impactResolved = true;
             var scale = strikeArea.transform.lossyScale;
             int count = Physics.OverlapBoxNonAlloc(strikeArea.transform.TransformPoint(strikeArea.center),
                 Vector3.Scale(strikeArea.size * .5f, new Vector3(Mathf.Abs(scale.x), Mathf.Abs(scale.y), Mathf.Abs(scale.z))),
@@ -104,7 +106,7 @@ namespace ChessFight.ProtectKing
         }
         void OnDisable()
         {
-            struck.Clear(); lastCycle = long.MinValue; lastTime = -1;
+            struck.Clear(); impactResolved = false; lastCycle = long.MinValue; lastTime = -1;
             if (weaponPivot != null) weaponPivot.localRotation = restRotation;
             if (tint != null) { tint.Clear(); SetWarningTint(); }
         }

@@ -53,6 +53,25 @@ class ArmoryTrialAssets(unittest.TestCase):
             self.assertNotEqual(number(f['context']),0);self.assertNotEqual(number(f['allowedArea']),0)
         for cls in ('ArmorySpearFloor','ArmoryDullahan','ArmoryCrossbowGallery','ArmoryWatcherGallery'):
             for _,f,_ in self.scripts(cls):self.assertNotEqual(number(f['context']),0)
+    def test_dullahan_faces_platform_has_leg_armour_and_passable_weapon(self):
+        for _,f,_ in self.scripts('ArmoryDullahan'):
+            root=self.transforms[number(f['m_GameObject'])]
+            children=[(int(k),fields(b)) for k,b in self.data.items() if b.startswith('--- !u!4 ') and number(fields(b)['m_Father'])==root]
+            armour=[(k,t) for k,t in children if self.names[number(t['m_GameObject'])]=='Dullahan armour - no head']
+            self.assertEqual(len(armour),1)
+            tid,t=armour[0];pos=transform(self.data,tid)
+            forward=rotate(vector(t['m_LocalRotation']),(0,0,1))
+            self.assertGreater(forward[0]*(102-pos[0]),10)
+            parts=[self.names[number(fields(b)['m_GameObject'])] for b in self.data.values() if b.startswith('--- !u!4 ') and number(fields(b)['m_Father'])==tid]
+            for part in ('thigh plate','knee guard','shin plate','armoured boot','pauldron','gauntlet'):
+                self.assertEqual(sum(n.startswith('Dullahan '+part+' ') for n in parts),2)
+            self.assertEqual(sum(n.startswith('Dullahan open neck rim ') for n in parts),4)
+            pivot=number(f['weaponPivot'])
+            weapon_objects={number(fields(b)['m_GameObject']) for b in self.data.values() if b.startswith('--- !u!4 ') and number(fields(b)['m_Father'])==pivot}
+            self.assertGreater(len(weapon_objects),2)
+            for b in self.data.values():
+                if b.startswith(('--- !u!65 ','--- !u!135 ','--- !u!136 ')):
+                    self.assertNotIn(number(fields(b)['m_GameObject']),weapon_objects)
     def test_front_battery_and_smaller_shields(self):
         for i,x in enumerate((54,58,62),6):
             self.assertEqual(self.position('Crossbow emitter '+str(i)),(x,7.5,129))

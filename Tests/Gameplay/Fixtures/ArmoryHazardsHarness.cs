@@ -92,6 +92,10 @@ class Harness
   Set(dullahan,"context",context);Set(dullahan,"weaponPivot",new Transform{position=new Vector3(11,0,0)});Set(dullahan,"strikeArea",area);Set(dullahan,"warningVisual",new Renderer());Call(dullahan,"Awake");
   actor.Position=new Vector3(0,0,0);actor.Hits=0;context.Now=3;Call(dullahan,"FixedUpdate");Check(actor.Hits==0,"Dullahan windup cannot damage");
   context.Now=4;Call(dullahan,"FixedUpdate");Check(actor.Hits==1&&actor.LastHit.z==-6,"Dullahan impact");Call(dullahan,"FixedUpdate");Check(actor.Hits==1,"Dullahan one hit per cycle");
+  var late=new ImportedObstacleActor{Position=new Vector3(0,0,0)};Physics.found=new[]{new Collider{actor=late}};
+  context.Now=4.02;Call(dullahan,"FixedUpdate");Check(late.Hits==0,"Entering just after landing is safe even while weapon stays down");
+  context.Now=4.2;Call(dullahan,"FixedUpdate");Check(late.Hits==0,"Landed weapon has no lingering damage volume");
+  Physics.found=new[]{new Collider{actor=actor},new Collider{actor=actor}};
   context.Now=4.9;Call(dullahan,"FixedUpdate");Check(actor.Hits==1,"Recovery is safe");
   context.Now=10;Call(dullahan,"FixedUpdate");Check(actor.Hits==2,"Next Dullahan strike can hit");
   Check(dullahan.PointInStrike(new Vector3(5,0,6)),"Sword uses its full rectangular footprint");
@@ -103,10 +107,13 @@ class Harness
   Check(dullahan.PointInStrike(new Vector3(-7,0,0)),"Axe maximum reach is inclusive");
   Check(!dullahan.PointInStrike(new Vector3(-7.1f,0,0)),"Axe beyond visible reach excluded");
   var parts=new[]{new Renderer(),new Renderer()};Set(dullahan,"warningParts",parts);Set(dullahan,"warningVisual",null);
-  context.Running=true;context.Seed++;context.Now=4;Call(dullahan,"FixedUpdate");
-  Check(parts[0].color.r>=.82f&&parts[0].color.r==parts[1].color.r,"All fan slices show bright impact hold");
+  context.Running=true;context.Seed++;context.Now=3.8;Call(dullahan,"FixedUpdate");
+  Check(parts[0].color.r>=.82f&&parts[0].color.r==parts[1].color.r,"All fan slices flash on landing");
   Check(parts[0].color.r==parts[0].color.g&&parts[0].color.g==parts[0].color.b,"Impact remains grayscale");
-  context.Now=4.9;Call(dullahan,"FixedUpdate");Check(Math.Abs(parts[0].color.r-.45f)<.001f,"Impact fan dims during recovery");
+  Physics.found=new[]{new Collider{actor=late}};context.Now=3.82;Call(dullahan,"FixedUpdate");Check(late.Hits==0,"Axe also allows crossing immediately after landing");
+  context.Now=4;Call(dullahan,"FixedUpdate");Check(Math.Abs(parts[0].color.r-.45f)<.001f,"Footprint dims while weapon is still down");
+  Physics.found=new Collider[0];context.Seed++;context.Now=3.8;Call(dullahan,"FixedUpdate");
+  Physics.found=new[]{new Collider{actor=late}};context.Now=3.82;Call(dullahan,"FixedUpdate");Check(late.Hits==0,"Empty landing still consumes the impact, no delayed entrant hit");
   Console.WriteLine("PASS: 10000 spear waves, stable temporal refuges, telegraphs, foot bounds, reset/cooldowns, Dullahan phase and axe-sector hits");
  }
 }
