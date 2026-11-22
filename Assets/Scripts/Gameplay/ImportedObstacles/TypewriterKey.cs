@@ -10,7 +10,7 @@ namespace ChessFight.ProtectKing
         [SerializeField, Min(.01f)] float pressSpeed = .8f;
         [SerializeField, Min(.01f)] float returnSpeed = 1.5f;
         [SerializeField, Min(0)] float jumpBonus = 2f;
-        Rigidbody body; Vector3 rest; float depth, velocity, releaseUntil; bool pressed;
+        Rigidbody body; Vector3 rest; float depth, velocity, releaseUntil; bool pressed, soundPressed;
         public Quaternion DeltaRotation => Quaternion.identity;
         public Vector3 PointVelocity(Vector3 point) => transform.up * velocity;
         void Awake()
@@ -18,6 +18,7 @@ namespace ChessFight.ProtectKing
             body = GetComponent<Rigidbody>(); rest = transform.localPosition;
             body.isKinematic = true; body.useGravity = false; body.interpolation = RigidbodyInterpolation.Interpolate;
         }
+        public event System.Action Pressed;
         public void SetPressed(bool value) { pressed = value; }
         public float TakeJumpBonus(Vector3 point)
         {
@@ -28,6 +29,9 @@ namespace ChessFight.ProtectKing
         void FixedUpdate()
         {
             float target = pressed && Time.time >= releaseUntil ? Mathf.Clamp(pressDepth, 0, .3f) : 0;
+            bool down = target > 0;
+            if (down && !soundPressed) Pressed?.Invoke();
+            soundPressed = down;
             float next = Mathf.MoveTowards(depth, target, (target > depth ? pressSpeed : returnSpeed) * Time.fixedDeltaTime);
             velocity = (depth - next) / Time.fixedDeltaTime; depth = next;
             Vector3 local = rest - Vector3.up * depth;
@@ -35,7 +39,7 @@ namespace ChessFight.ProtectKing
         }
         public void ResetKey()
         {
-            pressed = false; depth = velocity = releaseUntil = 0;
+            pressed = soundPressed = false; depth = velocity = releaseUntil = 0;
             if (body != null) body.position = transform.parent != null ? transform.parent.TransformPoint(rest) : rest;
         }
         void OnDisable() { if (body != null) ResetKey(); }

@@ -689,6 +689,8 @@ class Builder(LegacyBuilder):
         self.c.context(self.root);self.d.script(self.root,'PhysicsProfile',kit.fields(physicsRate=120,solverIterations=24))
         self.d.script(self.root,'GiantChessCourse',kit.fields(pawnPrefab='{fileID: 7684884123511159585, guid: fe69acb7e49fea745aa289c4d39f3e62, type: 3}',tuning='{fileID: 11400000, guid: f387368cafccca042ac935642cf094be, type: 2}',tileSize=14,replaySpeed=5,moveSeconds=3,warningSeconds=5,restSeconds=2,knockbackSpeed=12,upwardSpeed=9,botsEnabled=1,boardPreview=kit.ref(self.preview['go']),chessSpawnDepth=4))
         self.d.script(self.root,'GiantChessApproach',kit.fields(course=kit.ref(module),chessEntry=kit.ref(end['tr']))+'  transitionRoute: []\n')
+        kit.SCRIPT["RoyalLibraryAudio"]=kit.guid("Assets/Scripts/RagdollLab/RoyalLibraryAudio.cs")
+        self.d.script(self.root,"RoyalLibraryAudio",kit.fields(effectsVolume=.8,ambienceVolume=.45,thinkingVolume=.5,fadeSeconds=2))
         self.fit_chess_room()
         text,ids=stabilize(clean(self.d.render(scene=False)));self.serialized_root=ids[self.root['tr']]
         self.report.update(root=ids[self.root['go']],root_transform=self.serialized_root,local_id_scheme='hierarchy-type-sha256-v2',target_seconds=[120,180],preview_fractions=[0,.25,.55,.9])

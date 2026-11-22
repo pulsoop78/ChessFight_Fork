@@ -10,6 +10,10 @@ namespace ChessFight.RagdollLab
     // StateDrivenMover: offline authored chess replay; not a network-authoritative course.
     public sealed class GiantChessCourse : MonoBehaviour
     {
+        public event Action<Vector3> PieceLanded;
+        public RagdollPawn AudioPawn => players.Count > selected ? players[selected] : null;
+        public bool AudioPaused => menu || !Application.isFocused;
+        public float AudioBoardLength => tileSize * 8;
         public RagdollPawn pawnPrefab;
         public RagdollTuning tuning;
         [SerializeField, Min(10)] float tileSize = 18;
@@ -298,7 +302,8 @@ namespace ChessFight.RagdollLab
             {
                 var rule=step.rule;
                 step.piece.transform.position=Square(rule.To);
-                if(step.rook!=null) step.rook.transform.position=Square(rule.RookTo);
+                PieceLanded?.Invoke(step.piece.transform.position);
+                if(step.rook!=null) { step.rook.transform.position=Square(rule.RookTo); PieceLanded?.Invoke(step.rook.transform.position); }
                 rule.Apply(pieces,BuildPiece,p=>{if(p!=null)Destroy(p);});
             }
             for(int i=0;i<players.Count;i++)

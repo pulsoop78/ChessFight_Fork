@@ -21,6 +21,7 @@ namespace ChessFight.ProtectKing
         [SerializeField, Min(.1f)] float reopenSeconds = 1.3f;
         [SerializeField, Min(.5f)] float respawnSeconds = 2;
         [SerializeField] float phaseSeconds;
+        public event Action Opened, Closed;
         public event Action<GameObject, Transform, float> Crushed;
         public bool Simulating { get; set; }
         readonly Collider[] overlaps = new Collider[128];
@@ -76,7 +77,9 @@ namespace ChessFight.ProtectKing
                 Mathf.Max(.1f,closeSeconds), Mathf.Max(.2f,closedSeconds), Mathf.Max(.1f,reopenSeconds));
             clock += Time.fixedDeltaTime;
             float current = Apply();
+            if (previous < .999f && current >= .999f) Closed?.Invoke();
             bool opening = previous >= .999f && current < .999f;
+            if (opening) Opened?.Invoke();
             if(opening && closedDeck!=null) ThrowRiders();
             // A stationary full book volume closes the gap below the visible cover.
             if(closedDeck!=null) closedDeck.enabled=current>=.999f;

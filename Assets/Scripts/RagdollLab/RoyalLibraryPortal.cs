@@ -9,6 +9,8 @@ namespace ChessFight.RagdollLab
         [SerializeField, Min(.2f)] float revealSeconds = 1.6f;
         [SerializeField, Range(0,25)] float fovExpansion = 16;
         [SerializeField, Min(0)] float cameraPullback = 7;
+        public event System.Action Traversed;
+        public Transform Entrance => threshold;
         LabCamera rig; RagdollPawn observed;
         float previousZ, elapsed, savedFov, savedDistance;
         bool revealing;
@@ -31,6 +33,7 @@ namespace ChessFight.RagdollLab
             if(pawn!=observed) { Restore();observed=pawn;previousZ=p.z; }
             if(previousZ<0 && p.z>=0 && Mathf.Abs(p.x)<5 && p.y>-1 && p.y<8 && !revealing)
             {
+                Traversed?.Invoke();
                 savedFov=rig.baseFov;savedDistance=rig.distance;elapsed=0;revealing=true;
                 if(veil!=null) veil.SetActive(false);
             }

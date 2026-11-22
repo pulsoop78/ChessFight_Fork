@@ -21,6 +21,8 @@ namespace ChessFight.ProtectKing
         [SerializeField, Min(0)] float upwardForce = 2;
         readonly Collider[] overlaps = new Collider[512];
         readonly HashSet<ImportedObstacleActor> struck = new HashSet<ImportedObstacleActor>();
+        public event System.Action Impacted;
+        bool soundPlayed;
         double lastCycle = double.NaN;
         float Rest => Mathf.Max(.5f, restSeconds);
         float Warn => Mathf.Max(.5f, warningSeconds);
@@ -49,10 +51,11 @@ namespace ChessFight.ProtectKing
             base.FixedUpdate();
             double now = SharedTime;
             double cycle = System.Math.Floor((now + phaseOffset) / Period);
-            if (cycle != lastCycle) { struck.Clear(); lastCycle = cycle; }
+            if (cycle != lastCycle) { struck.Clear(); soundPlayed = false; lastCycle = cycle; }
             float t = Phase(now);
             if (impactArea == null || (context != null && (!context.Running || !context.Authority)) ||
                 t < Rest + Warn + Slam || t >= Rest + Warn + Slam + Hold) return;
+            if (!soundPlayed) { soundPlayed = true; Impacted?.Invoke(); }
             var scale = impactArea.transform.lossyScale;
             int count = Physics.OverlapBoxNonAlloc(impactArea.transform.TransformPoint(impactArea.center),
                 Vector3.Scale(impactArea.size * .5f, new Vector3(Mathf.Abs(scale.x), Mathf.Abs(scale.y), Mathf.Abs(scale.z))),

@@ -75,9 +75,10 @@ class Harness {
    Tick(stairs,10+row*2);Check(actor.hits==priorHits,"Safe support edge must not become a gap hit");
   }
   actor.support=new Collider();Tick(stairs,21);Check(actor.hits==priorHits,"Unrelated supporting floor is not keyboard bed");
-  var spring=new TypewriterKey();Set(spring,"body",new Rigidbody());spring.SetPressed(true);
+  var spring=new TypewriterKey();int taps=0;spring.Pressed+=()=>taps++;Set(spring,"body",new Rigidbody());spring.SetPressed(true);
   var step=typeof(TypewriterKey).GetMethod("FixedUpdate",BindingFlags.NonPublic|BindingFlags.Instance);
-  for(int i=0;i<20;i++)step.Invoke(spring,null);
+  for(int i=0;i<20;i++){spring.SetPressed(false);spring.SetPressed(true);step.Invoke(spring,null);}
+  Check(taps==1,"Foot query refresh does not repeat typing sound while holding a key");
   float depth=(float)typeof(TypewriterKey).GetField("depth",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(spring);
   Check(Math.Abs(depth-.14f)<.001f,"Key depresses under load");
   Check(Math.Abs(spring.TakeJumpBonus(Vector3.one)-2f)<.001f,"Small bonus on explicit jump");Check(spring.TakeJumpBonus(Vector3.one)==0,"Bonus cannot stack");
@@ -91,7 +92,7 @@ class Harness {
   Check(Math.Abs(ClosingBook.Fold(7.325f,6,1,.65f,2,1.3f)-.5f)<.001f,"Half fold is vertical");
   Check(ClosingBook.Fold(8,6,1,.65f,2,1.3f)==1,"Closed cover on page");
   Check(Math.Abs(ClosingBook.Fold(10.3f,6,1,.65f,2,1.3f)-.5f)<.001f,"Opening reverses hinge");
-  var book=new ClosingBook();Set(book,"cover",new Transform());Set(book,"recoveryPoint",new Transform());
+  var book=new ClosingBook();int opens=0,closes=0;book.Opened+=()=>opens++;book.Closed+=()=>closes++;Set(book,"cover",new Transform());Set(book,"recoveryPoint",new Transform());
   Set(book,"crushVolume",new BoxCollider{center=new Vector3(0,1.7f,8),size=new Vector3(18,4,16)});
   Set(book,"clock",7.58f);int crushes=0;book.Crushed+=(victim,point,seconds)=>{crushes++;Check(seconds==2,"Recovery delay");};
   actor.Position=new Vector3(0,0,8);Physics.found=new[]{new Collider{actor=actor},new Collider{actor=actor}};
@@ -111,6 +112,8 @@ class Harness {
   Check(actor.launches==1&&!deck.enabled,"Opening launches rider once and removes closed deck");
   actor.support=new Collider();Set(book,"clock",9.64f);for(int i=0;i<3;i++)bookStep.Invoke(book,null);
   Check(actor.launches==1,"Opening does not launch adjacent floor actor");
+  int oldCloses=closes;Set(book,"clock",7.64f);bookStep.Invoke(book,null);bookStep.Invoke(book,null);Check(closes==oldCloses+1,"Book close sound occurs once at full closure");
+  int oldOpens=opens;Set(book,"clock",9.64f);for(int i=0;i<4;i++)bookStep.Invoke(book,null);Check(opens==oldOpens+1,"Opening sound occurs once on reopening");
   Console.WriteLine("PASS: 2000 memory layouts, row rules, hits, key depression, jump-only rebound and new-round clues");
  }
 }
