@@ -12,7 +12,7 @@ namespace UnityEngine {
 }
 namespace ChessFight.Game {public static class GameSettings{public static float Effects=1,Music=1;}}
 namespace ChessFight.Gameplay {public class CourseModule{public Transform Exit=new Transform{position=new Vector3(0,0,148)};}}
-namespace ChessFight.ProtectKing {public class CommandStampPress{public Transform transform=new Transform();public event Action Impacted;}public class ClosingBook{public Transform transform=new Transform();public event Action Opened,Closed;}public class TypewriterKey{public Transform transform=new Transform();public event Action Pressed;}}
+namespace ChessFight.ProtectKing {public class TypewriterStairs{public Transform transform=new Transform();public event Action WrongKeyHit;}public class CommandStampPress{public Transform transform=new Transform();public event Action Impacted;}public class ClosingBook{public Transform transform=new Transform();public event Action Opened,Closed;}public class TypewriterKey{public Transform transform=new Transform();public event Action Pressed;}}
 namespace ChessFight.RagdollLab {public class RagdollPawn{public GameObject gameObject=new GameObject("pawn");public Transform Hips=new Transform();public bool IsFinite()=>true;}public class GiantChessCourse{public RagdollPawn AudioPawn=new RagdollPawn();public bool AudioPaused;public float AudioBoardLength=112;public event Action<Vector3> PieceLanded;}public class RoyalLibraryPortal{public Transform Entrance=new Transform{position=new Vector3(0,0,-136)};public event Action Traversed;}}
 class Harness{
  static void Set(object o,string n,object v)=>o.GetType().GetField(n,BindingFlags.Instance|BindingFlags.NonPublic).SetValue(o,v);

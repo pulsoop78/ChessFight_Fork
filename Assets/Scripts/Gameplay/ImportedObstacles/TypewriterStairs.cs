@@ -33,6 +33,7 @@ namespace ChessFight.ProtectKing
         float[] flashUntil;
         MaterialPropertyBlock tint;
 
+        public event Action WrongKeyHit;
         public bool IsSafe(int index) => layout != null && layout.Safe(index);
         void Awake()
         {
@@ -122,6 +123,7 @@ namespace ChessFight.ProtectKing
             if (key >= 0) flashUntil[key] = now + Mathf.Max(.05f, flashSeconds);
             actor.AddObstacleHit(transform.TransformDirection(Vector3.back) * Mathf.Max(0, backwardSpeed)
                 + Vector3.up * Mathf.Max(0, upwardSpeed), Mathf.Max(0, knockdownSeconds));
+            if (key >= 0) WrongKeyHit?.Invoke();
         }
 
         void Update()

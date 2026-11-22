@@ -51,7 +51,7 @@ class Harness {
    Check(layout.Keys==TypewriterMemory.Generate(new System.Random(seed)).Keys,"Repeatable seed");
   }
   Check(changes>1950,"Random rounds differ");Check(wideLeft>0&&wideRight>0,"Two candidates on both sides appear across rounds");
-  var puzzle=TypewriterMemory.Generate(random);var stairs=new TypewriterStairs();Set(stairs,"layout",puzzle);
+  var puzzle=TypewriterMemory.Generate(random);var stairs=new TypewriterStairs();int wrongSounds=0;stairs.WrongKeyHit+=()=>wrongSounds++;Set(stairs,"layout",puzzle);
   int safeIndex=0;while(!puzzle.Safe(safeIndex))safeIndex++;int wrongIndex=safeIndex==0?1:0;
   var areas=new BoxCollider[23];var keys=new TypewriterKey[23];
   for(int i=0;i<23;i++){areas[i]=new BoxCollider{center=new Vector3(i*3,.15f,0),size=new Vector3(2.8f,.7f,2.8f)};keys[i]=new TypewriterKey();}
@@ -60,13 +60,13 @@ class Harness {
   var context=new ObstacleContext();Set(stairs,"context",context);
   var actor=new ImportedObstacleActor{Position=new Vector3(safeIndex*3,.25f,0)};Physics.found=new[]{new Collider{actor=actor},new Collider{actor=actor}};
   actor.support=new Collider{key=keys[safeIndex]};
-  Tick(stairs,0);Check(actor.hits==0,"Safe row key and reaching hands ignored");
+  Tick(stairs,0);Check(actor.hits==0&&wrongSounds==0,"Safe key has no wrong-button sound");
   actor.Position=new Vector3(wrongIndex*3,.25f,0);actor.Grounded=false;Tick(stairs,.1f);Check(actor.hits==0,"Airborne crossing");
   actor.Grounded=true;actor.support=null;actor.Position=new Vector3(wrongIndex*3,-2,0);Tick(stairs,.2f);Check(actor.hits==0,"Below-key contact");
-  actor.support=new Collider{key=keys[wrongIndex]};actor.Position=new Vector3(wrongIndex*3,.25f,0);Tick(stairs,.3f);Check(actor.hits==1&&actor.Impulse.z==-12&&actor.Impulse.y==6,"Wrong grounded key");
-  Tick(stairs,.4f);Check(actor.hits==1,"No multiple impulses");context.Authority=false;Tick(stairs,2);Check(actor.hits==1,"Authority guard");context.Authority=true;
+  actor.support=new Collider{key=keys[wrongIndex]};actor.Position=new Vector3(wrongIndex*3,.25f,0);Tick(stairs,.3f);Check(actor.hits==1&&actor.Impulse.z==-12&&actor.Impulse.y==6,"Wrong grounded key");Check(wrongSounds==1,"Wrong-key knockback raises one audio event");
+  Tick(stairs,.4f);Check(actor.hits==1&&wrongSounds==1,"Cooldown also suppresses repeated wrong-key sound");context.Authority=false;Tick(stairs,2);Check(actor.hits==1,"Authority guard");context.Authority=true;
   actor.support=new Collider();actor.support.transform.parent=((BoxCollider)typeof(TypewriterStairs).GetField("keyboardWell",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(stairs)).transform;
-  actor.Position=new Vector3(1.5f,0,1.5f);Tick(stairs,3);Check(actor.hits==2,"Keyboard gaps cannot bypass the puzzle");
+  actor.Position=new Vector3(1.5f,0,1.5f);Tick(stairs,3);Check(actor.hits==2&&wrongSounds==1,"Gap knockback does not pretend a wrong button was pressed");
   // Every physical row has a safe support, including a hip projection outside the circular key.
   int priorHits=actor.hits;
   for(int row=0;row<5;row++) {

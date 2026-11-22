@@ -49,6 +49,8 @@ namespace ChessFight.RagdollLab
             }
             foreach(var key in GetComponentsInChildren<TypewriterKey>())
                 Bind(h=>key.Pressed+=h,h=>key.Pressed-=h,key.transform,"Typewriter");
+            foreach(var keyboard in GetComponentsInChildren<TypewriterStairs>())
+                Bind(h=>keyboard.WrongKeyHit+=h,h=>keyboard.WrongKeyHit-=h,keyboard.transform,"TypewriterWrong");
             placement=Clip("Placement");portalClip=Clip("Portal");
             // Fixed pool prevents one GameObject per chess landing and preserves overlapping decays.
             var landings=new AudioSource[4];for(int i=0;i<landings.Length;i++)landings[i]=Source("Chess landing "+i,transform,true);

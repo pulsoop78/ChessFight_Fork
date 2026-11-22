@@ -1,11 +1,12 @@
-# 왕실 서재 효과음 · 2026-11-22
+# 왕실 서재 효과음 · 2026-11-23
 
-대상은 `Assets/Prefabs/Obstacles/WarRoomComplete.prefab`과 생성용 `Assets/Resources/RoyalPalace/WarRoomComplete.prefab`이다. 기존 씬/크기/타이밍 수치는 유지하고 루트에 `RoyalLibraryAudio`만 추가했다. 첨부 원본은 사용자 요청대로 별도 사본으로 보관하지 않으며, 아래8개 MP3는 앞/뒤 무음과 음량·끝단 클릭을 정리한 실제 사용 파일이다.
+대상은 `Assets/Prefabs/Obstacles/WarRoomComplete.prefab`과 생성용 `Assets/Resources/RoyalPalace/WarRoomComplete.prefab`이다. 기존 씬/크기/타이밍 수치는 유지하고 루트에 `RoyalLibraryAudio`만 추가했다. 첨부 원본은 사용자 요청대로 별도 사본으로 보관하지 않으며, 아래9개 MP3는 앞/뒤 무음과 음량·끝단 클릭을 정리한 실제 사용 파일이다.
 
 | 첨부 이름 | Resources/RoyalLibraryAudio | 재생 시점 |
 |---|---|---|
 | 기물_두는_소리 | Placement.mp3 | 백/흑 기물이 실제로 함께 착지할 때 각각 |
-| 타자기_치는_소리 | Typewriter.mp3 | 키가 실제로 눌리기 시작할 때1회(지속 압력 중 반복 없음) |
+| 타자기_버튼_소리 (11/23 교체) | Typewriter.mp3 | 키가 실제로 눌리기 시작할 때1회(지속 압력 중 반복 없음) |
+| 잘못된_버튼_눌러서_뒤로날아갈때 | TypewriterWrong.mp3 | 오답 키로 실제 밀쳐지는 순간1회(쿨다운/중복 콜라이더 제외, 틈 바닥 제외) |
 | 체스_수_고민하는_소리 | Thinking.mp3 | 조작 캐릭터가 거대 체스판에 있는 동안8초 클립 반복 |
 | 도장_찍는_소리 | Stamp.mp3 | 도장이 바닥 높이에 도달한 첫 물리 프레임1회 |
 | 책_펴는_소리 | BookOpen.mp3 | 닫힌 책이 다시 열리기 시작할 때 |
@@ -22,7 +23,8 @@ Inspector에서 루트 `RoyalLibraryAudio`의 Effects Volume(.8), Ambience Volum
 | 파일 | 제거한 앞부분(초) | 사용 길이(초) | 음량 조정(dB) |
 |---|---:|---:|---:|
 | Placement.mp3 | 0.0 | 0.1594 | 0.34 |
-| Typewriter.mp3 | 0.1728 | 0.2222 | -3.58 |
+| Typewriter.mp3 | 0.1384 | 0.2954 | -2.98 |
+| TypewriterWrong.mp3 | 0.4243 | 0.2588 | 4.91 |
 | Thinking.mp3 | 0.0 | 8.0 | 10.49 |
 | Stamp.mp3 | 0.249 | 0.4036 | 0.88 |
 | BookOpen.mp3 | 0.73 | 1.8827 | 13.18 |
@@ -32,6 +34,8 @@ Inspector에서 루트 `RoyalLibraryAudio`의 Effects Volume(.8), Ambience Volum
 
 ## 확인 범위
 
-자동 검사는 실제 오디오 컨트롤러의 진입/체스판/퇴장 페이드, 일시정지/복귀, 재진입/비활성화 정리, 두 프리팹 연결 및8개 자산 존재를 검사한다. 기존 타자기/책 컨트롤러 실행 검사에도 키 압력 유지 중1회 재생 이벤트, 책 열기/닫기1회 이벤트 조건을 추가했다. Unity Editor가 없어 실제 스피커 출력/기존 BGM과의 음량 균형/귀로 듣는 동작 일치는 미확인이다.
+자동 검사는 실제 오디오 컨트롤러의 진입/체스판/퇴장 페이드, 일시정지/복귀, 재진입/비활성화 정리, 두 프리팹 연결 및9개 자산 존재를 검사한다. 기존 타자기/책 컨트롤러 실행 검사에도 정답/오답·쿨다운·틈 바닥별 오답 소리 구분, 키 압력 유지 중1회 재생 이벤트, 책 열기/닫기1회 이벤트 조건을 추가했다. Unity Editor가 없어 실제 스피커 출력/기존 BGM과의 음량 균형/귀로 듣는 동작 일치는 미확인이다.
 
 Unity에서 GiantChessCourse 씬을 열고 차원문 진입→도장/책→타자기→거대 체스→마지막 출구 순서로 확인한다. 키를 계속 밟기, Esc와 복귀, F3, Tab, 코스 재진입도 확인한다. 현재 코스는 오프라인 시험용으로 네트워크 효과음 복제는 추가하지 않았다.
+
+11/23: 첨부1번으로 Typewriter.mp3 자체를 교체해 기존 GUID를 유지했다. 첨부2번은 TypewriterWrong.mp3로 정리해 추가했고 별도 원본/백업 MP3는 프로젝트에 보관하지 않았다. 두 프리팹에 이미 있는 RoyalLibraryAudio가 자동으로 새 리소스를 읽으며 추가 Inspector 연결은 필요 없다. Unity에서는 정답 키 클릭/오답 키 클릭+밀침 효과음, 지속 접촉/일시정지/재시작을 직접 들어 확인한다.
