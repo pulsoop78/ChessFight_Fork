@@ -55,20 +55,21 @@ class Harness
  {
   for(int seed=0;seed<500;seed++)
   {
-   var first=ArmorySpearPattern.Generate(seed,0);var variants=new HashSet<string>();
+   var variants=new HashSet<string>();
    for(int wave=0;wave<20;wave++)
    {
     var p=ArmorySpearPattern.Generate(seed,wave);variants.Add(Fingerprint(p));
     Check(Fingerprint(p)==Fingerprint(ArmorySpearPattern.Generate(seed,wave)),"Deterministic seed and wave");
     for(int row=0;row<6;row++)
     {
-     Check(p.SafeStart(row)==first.SafeStart(row),"Safe corridor cannot vanish between waves");
+     Check(wave==0 || row!=0 || Math.Abs(p.SafeStart(0)-ArmorySpearPattern.Generate(seed,wave-1).SafeStart(0))==1,"Entrance refuge moves one column per wave");
      if(row>0)Check(Math.Abs(p.SafeStart(row)-p.SafeStart(row-1))<=1,"Connected safe refuge route");
      int safe=0,threat=0;
      for(int col=0;col<4;col++) {if(p.Protected(row,col)){safe++;Check(!p.Raised(row*4+col),"Protected cells never rise");}if(p.Raised(row*4+col))threat++;}
-     Check(safe==1&&threat>=2&&threat<=3,"One protected lane and two or three spears per row");
+     Check(safe>=1&&safe<=2&&threat>=2&&threat<=3,"Connected refuge and two or three spears per row");
+     if(row>0)Check(p.Protected(row,p.SafeStart(row-1)),"Turn has an orthogonal bridge from preceding row");
     }
-    Check(p.SafeStart(0)==p.SafeStart(1),"Straight tutorial rows");
+    if(wave>0)Check(Fingerprint(p)!=Fingerprint(ArmorySpearPattern.Generate(seed,wave-1)),"Consecutive waves must differ");
    }
    Check(variants.Count>1,"Random waves actually differ");
   }
@@ -114,6 +115,6 @@ class Harness
   context.Now=4;Call(dullahan,"FixedUpdate");Check(Math.Abs(parts[0].color.r-.45f)<.001f,"Footprint dims while weapon is still down");
   Physics.found=new Collider[0];context.Seed++;context.Now=3.8;Call(dullahan,"FixedUpdate");
   Physics.found=new[]{new Collider{actor=late}};context.Now=3.82;Call(dullahan,"FixedUpdate");Check(late.Hits==0,"Empty landing still consumes the impact, no delayed entrant hit");
-  Console.WriteLine("PASS: 10000 spear waves, stable temporal refuges, telegraphs, foot bounds, reset/cooldowns, Dullahan phase and axe-sector hits");
+  Console.WriteLine("PASS: 10000 spear waves, varying connected refuges, telegraphs, foot bounds, reset/cooldowns, Dullahan phase and axe-sector hits");
  }
 }
