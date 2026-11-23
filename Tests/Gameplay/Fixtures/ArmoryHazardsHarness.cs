@@ -53,6 +53,7 @@ class Harness
  static int RaisedCell(ArmorySpearPattern p){for(int i=0;i<24;i++)if(p.Raised(i))return i;throw new Exception("No raised cell");}
  static void Main()
  {
+  var triples=new int[6];
   for(int seed=0;seed<500;seed++)
   {
    var variants=new HashSet<string>();
@@ -67,12 +68,15 @@ class Harness
      int safe=0,threat=0;
      for(int col=0;col<4;col++) {if(p.Protected(row,col)){safe++;Check(!p.Raised(row*4+col),"Protected cells never rise");}if(p.Raised(row*4+col))threat++;}
      Check(safe>=1&&safe<=2&&threat>=2&&threat<=3,"Connected refuge and two or three spears per row");
+     if(threat==3)triples[row]++;
      if(row>0)Check(p.Protected(row,p.SafeStart(row-1)),"Turn has an orthogonal bridge from preceding row");
     }
     if(wave>0)Check(Fingerprint(p)!=Fingerprint(ArmorySpearPattern.Generate(seed,wave-1)),"Consecutive waves must differ");
    }
    Check(variants.Count>1,"Random waves actually differ");
   }
+  for(int row=0;row<6;row++)
+  {float fraction=triples[row]/10000f;Check(Math.Abs(fraction-.8f)<.02f,"Every row, including entrance, samples 80% triples and 20% doubles");Console.WriteLine("Row "+row+": three spears "+triples[row]+" / 10000");}
   var context=new ArmoryCourseContext();var floor=new ArmorySpearFloor();var spears=new Transform[24];var tiles=new Renderer[24];
   for(int i=0;i<24;i++){spears[i]=new Transform{localPosition=new Vector3(0,-1.4f,0)};tiles[i]=new Renderer();}
   Set(floor,"context",context);Set(floor,"spears",spears);Set(floor,"warningTiles",tiles);Set(floor,"zone",new BoxCollider{center=new Vector3(0,1.3f,12),size=new Vector3(12,3,24)});Call(floor,"Awake");
