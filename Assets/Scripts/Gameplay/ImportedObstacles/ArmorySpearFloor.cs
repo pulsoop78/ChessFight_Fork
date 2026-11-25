@@ -18,9 +18,7 @@ namespace ChessFight.ProtectKing
         [SerializeField, Min(.4f)] float raisedSeconds = 1.1f;
         [SerializeField, Min(.1f)] float restSeconds = 1.5f;
         [SerializeField, Min(.1f)] float spearHeight = 1.4f;
-        [SerializeField, Min(0)] float knockbackSpeed = 5;
-        [SerializeField, Min(0)] float upwardSpeed = 3;
-        [SerializeField, Min(0)] float stunSeconds = .6f;
+        [SerializeField, Min(.1f)] float stunSeconds = .6f;
         readonly Collider[] overlaps = new Collider[256];
         readonly HashSet<ImportedObstacleActor> struck = new HashSet<ImportedObstacleActor>();
         readonly Vector3[] rests = new Vector3[ArmorySpearPattern.CellCount];
@@ -79,7 +77,7 @@ namespace ChessFight.ProtectKing
                 int index = CellAt(local);
                 if (index < 0 || !pattern.Raised(index)) continue;
                 struck.Add(actor);
-                actor.AddObstacleHit(transform.TransformDirection(Vector3.back) * Mathf.Max(0, knockbackSpeed) + Vector3.up * Mathf.Max(0, upwardSpeed), Mathf.Max(0, stunSeconds));
+                actor.AddObstacleHit(Vector3.zero, Mathf.Max(.1f, stunSeconds));
             }
         }
         public int CellAt(Vector3 localPoint)

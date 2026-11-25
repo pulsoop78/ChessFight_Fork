@@ -19917,8 +19917,6 @@ MonoBehaviour:
   raisedSeconds: 1.1
   restSeconds: 1.5
   spearHeight: 1.4
-  knockbackSpeed: 5
-  upwardSpeed: 3
   stunSeconds: 0.6
   spears:
   - {fileID: 2999989866132218554}

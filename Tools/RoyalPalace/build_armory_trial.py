@@ -123,7 +123,7 @@ class Builder:
                 spear=self.group('Rising spear '+str(row)+' '+str(col),group,(x,-1.4,z));spears.append(spear['tr'])
                 self.box(spear,'Spear shaft',(0,.7,0),(.13,1.4,.13),'ArmoryTrialLightGray',False)
                 self.box(spear,'Spear point',(0,1.17,0),(.22,.3,.22),'ArmoryTrialLightGray',False,rot=(0,0,.38268343,.92387953))
-        self.d.script(group,'ArmorySpearFloor',kit.fields(context=kit.ref(self.context),zone=kit.ref(zone),warningSeconds=2,raisedSeconds=1.1,restSeconds=1.5,spearHeight=1.4,knockbackSpeed=5,upwardSpeed=3,stunSeconds=.6)+refs('spears',spears)+refs('warningTiles',tiles))
+        self.d.script(group,'ArmorySpearFloor',kit.fields(context=kit.ref(self.context),zone=kit.ref(zone),warningSeconds=2,raisedSeconds=1.1,restSeconds=1.5,spearHeight=1.4,stunSeconds=.6)+refs('spears',spears)+refs('warningTiles',tiles))
     def armour(self,parent,name,pos):
         g=self.group(name,parent,pos)
         self.box(g,'Armour stand',(0,.2,0),(3,.4,3),'ArmoryTrialDarkGray',True,unclimb=True)

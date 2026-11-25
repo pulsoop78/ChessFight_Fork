@@ -34,6 +34,8 @@ class ArmoryTrialAssets(unittest.TestCase):
         self.assertEqual(len(self.scripts('ObstacleContext')),1)
     def test_all_four_hazard_bindings_and_capped_shield_supply(self):
         _,spear,raw=self.scripts('ArmorySpearFloor')[0]
+        self.assertNotIn('knockbackSpeed',spear);self.assertNotIn('upwardSpeed',spear)
+        self.assertGreater(float(spear['stunSeconds']),0)
         self.assertEqual(len(self.refs(raw,'spears')),24)
         self.assertEqual(len(self.refs(raw,'warningTiles')),24)
         self.assertEqual(len(self.scripts('ArmoryDullahan')),2)

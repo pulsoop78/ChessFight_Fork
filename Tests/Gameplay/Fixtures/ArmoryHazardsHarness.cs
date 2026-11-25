@@ -14,7 +14,7 @@ namespace UnityEngine
  public struct Vector3
  {
   public float x,y,z;public Vector3(float a,float b,float c){x=a;y=b;z=c;}
-  public static Vector3 one=>new Vector3(1,1,1);public static Vector3 up=>new Vector3(0,1,0);public static Vector3 back=>new Vector3(0,0,-1);
+  public static Vector3 zero=>new Vector3();public static Vector3 one=>new Vector3(1,1,1);public static Vector3 up=>new Vector3(0,1,0);public static Vector3 back=>new Vector3(0,0,-1);
   public static Vector3 operator+(Vector3 a,Vector3 b)=>new Vector3(a.x+b.x,a.y+b.y,a.z+b.z);
   public static Vector3 operator-(Vector3 a,Vector3 b)=>new Vector3(a.x-b.x,a.y-b.y,a.z-b.z);
   public static Vector3 operator*(Vector3 a,float f)=>new Vector3(a.x*f,a.y*f,a.z*f);
@@ -53,7 +53,7 @@ class Harness
  static int RaisedCell(ArmorySpearPattern p){for(int i=0;i<24;i++)if(p.Raised(i))return i;throw new Exception("No raised cell");}
  static void Main()
  {
-  var triples=new int[6];
+  var triples=new int[6];var masks=new int[6,16];int farJumps=0,straightLanes=0;
   for(int seed=0;seed<500;seed++)
   {
    var variants=new HashSet<string>();
@@ -63,20 +63,26 @@ class Harness
     Check(Fingerprint(p)==Fingerprint(ArmorySpearPattern.Generate(seed,wave)),"Deterministic seed and wave");
     for(int row=0;row<6;row++)
     {
-     Check(wave==0 || row!=0 || Math.Abs(p.SafeStart(0)-ArmorySpearPattern.Generate(seed,wave-1).SafeStart(0))==1,"Entrance refuge moves one column per wave");
-     if(row>0)Check(Math.Abs(p.SafeStart(row)-p.SafeStart(row-1))<=1,"Connected safe refuge route");
-     int safe=0,threat=0;
-     for(int col=0;col<4;col++) {if(p.Protected(row,col)){safe++;Check(!p.Raised(row*4+col),"Protected cells never rise");}if(p.Raised(row*4+col))threat++;}
-     Check(safe>=1&&safe<=2&&threat>=2&&threat<=3,"Connected refuge and two or three spears per row");
-     if(threat==3)triples[row]++;
-     if(row>0)Check(p.Protected(row,p.SafeStart(row-1)),"Turn has an orthogonal bridge from preceding row");
+     int safe=0,threat=0,mask=0;
+     for(int col=0;col<4;col++) {if(p.Protected(row,col)){safe++;Check(!p.Raised(row*4+col),"Safe cells never rise");}if(p.Raised(row*4+col)){threat++;mask|=1<<col;}}
+     Check(safe==4-threat&&threat>=2&&threat<=3,"Every independent row leaves one or two safe cells");
+     Check(p.Protected(row,p.SafeStart(row)),"Safe accessor identifies an unraised tile");
+     if(threat==3)triples[row]++;masks[row,mask]++;
+     if(row>0 && Math.Abs(p.SafeStart(row)-p.SafeStart(row-1))>1)farJumps++;
     }
-    if(wave>0)Check(Fingerprint(p)!=Fingerprint(ArmorySpearPattern.Generate(seed,wave-1)),"Consecutive waves must differ");
+    bool straight=false;for(int col=0;col<4;col++){bool clear=true;for(int row=0;row<6;row++)if(p.Raised(row*4+col))clear=false;if(clear)straight=true;}
+    if(straight)straightLanes++;
    }
    Check(variants.Count>1,"Random waves actually differ");
   }
+  Check(farJumps>500,"Adjacent rows are not tied to an adjacent safe corridor");
+  Check(straightLanes<500,"A straight safe lane is no longer forced across six rows");
   for(int row=0;row<6;row++)
-  {float fraction=triples[row]/10000f;Check(Math.Abs(fraction-.8f)<.02f,"Every row, including entrance, samples 80% triples and 20% doubles");Console.WriteLine("Row "+row+": three spears "+triples[row]+" / 10000");}
+  {
+   float fraction=triples[row]/10000f;Check(Math.Abs(fraction-.8f)<.02f,"Every row samples 80% triples and 20% doubles");
+   for(int mask=0;mask<16;mask++){int bits=0;for(int bit=0;bit<4;bit++)if((mask&(1<<bit))!=0)bits++;if(bits==2||bits==3)Check(masks[row,mask]>150,"Every pair/triple position combination is possible in every row");}
+   Console.WriteLine("Row "+row+": three spears "+triples[row]+" / 10000");
+  }
   var context=new ArmoryCourseContext();var floor=new ArmorySpearFloor();var spears=new Transform[24];var tiles=new Renderer[24];
   for(int i=0;i<24;i++){spears[i]=new Transform{localPosition=new Vector3(0,-1.4f,0)};tiles[i]=new Renderer();}
   Set(floor,"context",context);Set(floor,"spears",spears);Set(floor,"warningTiles",tiles);Set(floor,"zone",new BoxCollider{center=new Vector3(0,1.3f,12),size=new Vector3(12,3,24)});Call(floor,"Awake");
@@ -87,7 +93,7 @@ class Harness
   context.Now=3.8;context.Running=false;Call(floor,"FixedUpdate");Check(actor.Hits==0,"Paused trial cannot hit");
   context.Running=true;actor.Position=CellPoint(safeCell);Call(floor,"FixedUpdate");Check(actor.Hits==0,"Refuge contact remains safe");
   actor.Position=CellPoint(raised,1.8f);Call(floor,"FixedUpdate");Check(actor.Hits==0,"High airborne crossing ignored");
-  actor.Position=CellPoint(raised);Call(floor,"FixedUpdate");Check(actor.Hits==1&&actor.LastHit.z==-5&&actor.LastStun==.6f,"Raised spear foot contact once");
+  actor.Position=CellPoint(raised);Call(floor,"FixedUpdate");Check(actor.Hits==1&&actor.LastHit.sqrMagnitude==0&&actor.LastStun==.6f,"Spear knocks down once with zero added launch velocity");
   Call(floor,"FixedUpdate");Check(actor.Hits==1,"Duplicate ragdoll colliders and sustained contact do not stack");
   actor.Position=new Vector3(-7,0,12);Call(floor,"FixedUpdate");Check(actor.Hits==1,"Outside zone does not hit through hands");
   context.Now=8.4;actor.Position=CellPoint(RaisedCell(ArmorySpearPattern.Generate(7,1)));Call(floor,"FixedUpdate");Check(actor.Hits==2,"New wave can hit again");
@@ -119,6 +125,6 @@ class Harness
   context.Now=4;Call(dullahan,"FixedUpdate");Check(Math.Abs(parts[0].color.r-.45f)<.001f,"Footprint dims while weapon is still down");
   Physics.found=new Collider[0];context.Seed++;context.Now=3.8;Call(dullahan,"FixedUpdate");
   Physics.found=new[]{new Collider{actor=late}};context.Now=3.82;Call(dullahan,"FixedUpdate");Check(late.Hits==0,"Empty landing still consumes the impact, no delayed entrant hit");
-  Console.WriteLine("PASS: 10000 spear waves, varying connected refuges, telegraphs, foot bounds, reset/cooldowns, Dullahan phase and axe-sector hits");
+  Console.WriteLine("PASS: 10000 spear waves, independently randomized rows, telegraphs, foot bounds, reset/cooldowns, Dullahan phase and axe-sector hits");
  }
 }
